@@ -3,7 +3,7 @@
  */
 
 module.exports = {
-    entry: './9.js',
+    entry: './7.js',
 
     output: {
         filename: 'bundle.js',
