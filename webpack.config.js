@@ -3,7 +3,7 @@
  */
 
 module.exports = {
-    entry: './7.js',
+    entry: ['babel-polyfill', './9.js'],
 
     output: {
         filename: 'bundle.js',
@@ -12,7 +12,7 @@ module.exports = {
 
     module: {
         loaders: [
-            { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader?presets[]=es2015&presets[]=react' }
+            { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' }
         ]
     }
 }
