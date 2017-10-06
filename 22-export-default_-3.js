@@ -1,6 +1,6 @@
-const foo = () => {
-    return 'export default 非匿名函数2 es6'
-};
+function foo() {
+    return 'export default 非匿名函数2'
+}
 
 export default foo;
 
