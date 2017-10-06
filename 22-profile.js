@@ -9,5 +9,5 @@ export {  // 优先写法
     firstName,
     lastName,
     year,
-    multiply,
+    multiply, //  函数名，调用的时候相应传参数
 }
