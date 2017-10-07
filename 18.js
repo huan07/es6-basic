@@ -3,7 +3,7 @@
  */
 
 // 1.
-function timeout(ms) {  // 用await调用 与timeout2是等价的
+function timeout(ms) {  //  .then()调用 或者紧跟在await后调用 与timeout2是等价的
     return new Promise((resolve) => {
         setTimeout(resolve, ms);
     });
@@ -75,7 +75,7 @@ f52()
 
 // 错误处理
 async function f6() {
-    await new Promise(function (resolve, reject) {
+    await new Promise(function(resolve, reject) {
         throw new Error('错误处理f6');
     });
 }
