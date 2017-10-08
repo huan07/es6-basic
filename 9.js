@@ -10,21 +10,26 @@ var foo = 'bar';
 var baz = { foo, };
 console.log(baz);
 
-var o = {
+var o = { // !!!!
     method(){
-        return 'method简写';
+        return 'method简写; ';
     }
 };
 var o_ = {
-    method: function () {
-        return 'method _ es2015';
+    method: function() {
+        return 'method _ es2015; ';
     }
 };
-console.log(o.method(), o_.method());
+var o__ = { // !!!!
+    method: () => {
+        return 'method简写 _结合箭头函数; ';
+    }
+};
+console.log(o.method(), o_.method(), o__.method());
 
 // CommonJS 模块  to add
 
-// 2
+// 2 属性名表达式赋值，取值  !!!!!!!!!!!!
 let propKey = 'foo';
 let obj = { // ES6 允许字面量定义对象时,用表达式作为对象的属性名，在 ES5 中不支持
     [propKey]: true,
@@ -34,7 +39,7 @@ let obj = { // ES6 允许字面量定义对象时,用表达式作为对象的属
         return 'hello function';
     }
 };
-console.log('obj', obj, obj.hello());
+console.log('obj', obj, obj[propKey], obj[`abc`], obj.hello());
 // 属性名表达式与简洁表示法，不能同时使用，会报错
 /*obj={
  [propKey],
@@ -55,7 +60,7 @@ console.log("Object.is('true','true')", Object.is('true', 'true'));
 
 console.log("Object.is({},{})", Object.is({}, {}));
 
-console.log("Object.is(-0,0)", Object.is(- 0, 0), "  -0===0", - 0 === 0);
+console.log("Object.is(-0,0)", Object.is(-0, 0), "  -0===0", -0 === 0);
 
 console.log("Object.is(NaN,NaN)", Object.is(NaN, NaN), "NaN===NaN", NaN === NaN);
 // ES5 可以通过下面的代码，部署Object.is   to add
