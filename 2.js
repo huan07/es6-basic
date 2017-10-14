@@ -8,22 +8,22 @@
     var b = 1;
 }
 
-//console.log(a); // error
+//console.log(a); // error 没有被定义
 console.log(b);
 
 // example 1
-for (let i = 0; i < 10; i++) {
+for(let i = 0; i < 10; i++) {
 }
-// console.log(i); // error
+// console.log(i); // error 没有被定义  ！！！！！！！！！！！！！
 
-for (var i2 = 0; i2 < 10; i2++) {
+for(var i2 = 0; i2 < 10; i2++) {
 }
 console.log(i2);
 
 // example 2
 var a3 = [];
-for (var i3 = 0; i3 < 3; i3++) {
-    a3[i3] = function () {
+for(var i3 = 0; i3 < 3; i3++) {
+    a3[i3] = function() {
         console.log(i3);
     };
 }
@@ -31,8 +31,8 @@ a3[0]();
 a3[2]();
 
 var a4 = [];
-for (let i4 = 0; i4 < 3; i4++) {
-    a4[i4] = function () {
+for(let i4 = 0; i4 < 3; i4++) {
+    a4[i4] = function() {
         console.log(i4);
     };
 }
@@ -60,9 +60,9 @@ console.log('block {} TestLetConst=>', blockTestLet1(), blockTestLet2(), blockTe
 
 // for 特别之处：父作用域，循环体自作用域
 /*for (let i5 = 0; i5 < 3; i5++) { // 有坑 无数次的打印
-    let i5 = '1';
-    console.log(i5);  // ??
-}*/
+ let i5 = '1';
+ console.log(i5);  // ??
+ }*/
 
 
 // let没有变量提示
