@@ -1,120 +1,98 @@
 /**
- * Created by yangHuan on 17/9/11.
+ * Created by yangHuan on 17/10/17.
  */
+// 1.
+let s1 = Symbol();
+console.log(s1, typeof s1, Object.prototype.toString.call(s1));
 
-let s = Symbol();
-typeof s;
-console.log(typeof s);
+let s2 = Symbol('foo');
+console.log(s2);
 
-var s1 = Symbol('foo');
-var s2 = Symbol('bar');
-console.log(s1, s2, typeof s1, typeof s2, s1.toString(), s2.toString());
+let s3 = Symbol({
+    toString(){
+        return '调用对象toString方法的返回值';
+    }
+});
+console.log(s3);
 
-// Symbol的参数是一个对象，to add
+// Symbol数据类型的值是不想等，不能与其他类型的值运算
+const sym = Symbol('My symbol');
+console.log(String(sym), sym.toString());
+console.log(Boolean(sym), sym, !sym);
+// console.log(Number(sym),sym+1); error
 
-console.log(`Symbol()===Symbol()=>${Symbol() === Symbol()}`, `Symbol('foo')===Symbol('foo')=>${Symbol('foo') === Symbol('foo')}`);
+// 2.！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+let symbolAttr = Symbol();
+let obj = {};
+obj[symbolAttr] = 'hello';   // 不能用点运算符  Symbol 值必须放在方括号内
 
-var sym = Symbol('My symbol');
-//console.log('Symbol与其他类型值运算会报错'+sym,`Symbol与其他类型值运算会报错${sym}`);
-
-// Symbol可以显式转换为String，可以转换为Boolean,不能为Number
-var sym = Symbol('My symbol');
-console.log(String(sym), sym.toString(), Boolean(sym));
-if (sym) {
-    console.log('Symbol隐式转换为Boolean');
-}
-
-// 1.2
-var mySymbol = Symbol(); // 属性名必须放在[]内
-
-var a1 = {};
-a1[mySymbol] = 'hello1'; // 不能用点运算符
-
-var a2 = {
-    [mySymbol]: 'hello2',
-}
-
-var a3 = {};
-Object.defineProperty(a3, mySymbol, { value: 'hello3' });
-
-console.log(a1, a2, a3);
-
-var log = {};
-log.levels = {
-    DEBUG: Symbol('debug'),
-    INFO: Symbol('info'),
-    WARN: Symbol('warn'),
-};
-console.log(log.levels);
-
-// to add another examples
-
-// 3.风格良好的代码：消除魔术字符串 解除常量在代码中的强耦合，利于维护
-// best
-var shapeType = {  // better code style
-    triangle: 'Triangle'
+let obj2 = {
+    [symbolAttr]: 'baidu',
 };
 
-function getArea(shape, options) {
-    var area = 0;
-    switch (shape) {
+let obj3 = {};
+Object.defineProperty(obj3, symbolAttr, { value: 'love you' });
+
+console.log(obj[symbolAttr], obj2[symbolAttr], obj3[symbolAttr]);
+
+// 3. 消除魔术字符串！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+const shapeType = {
+    triangle: Symbol(),
+    rectangle: Symbol(),
+};
+function getArea(shape, optioms) {
+    let area = 0;
+    switch(shape) {
         case shapeType.triangle:
-            area = .5 * options.width * options.height;
+            area = .5 * optioms.width * optioms.height;
+            break;
+        case shapeType.rectangle:
+            area = optioms.width * optioms.height;
             break;
     }
     return area;
 }
+const triangleArea = getArea(shapeType.triangle, { width: 20, height: 10 });
+const rectangleArea = getArea(shapeType.rectangle, { width: 20, height: 10 });
+console.log(triangleArea, rectangleArea);
 
-console.log('消除魔术字符串getArea', getArea(shapeType.triangle, { width: 10, height: 10 }));
 
-// 4.
-var obj = {};
-var a = Symbol('a');
-var b = Symbol('b');
+// 获取对象的所有 Symbol 属性名: Object.getOwnPropertySymbols方法 不会被其他方法返回
+const testObjKey = {
+    true: 1,
+    1: 2,
+    [Symbol(true)]: 11,
+    [Symbol(1)]: 22,
+};
+console.log(Object.getOwnPropertySymbols(testObjKey));
 
-obj[a] = 'hello';
-obj[b] = 'world';
-
-var objectSymbols = Object.getOwnPropertySymbols(obj);
-console.log('objectSymbols', objectSymbols);
-
-// 4.2 example
-var obj = { 5: 5, };
-var foo = Symbol('foo');
-Object.defineProperty(obj, foo, {
-    value: 'foobar',
-});
-for (var i in obj) {
+for(let i in testObjKey) {
     console.log(i);
 }
-console.log('Object.getOwnPropertyNames(obj)', Object.getOwnPropertyNames(obj), 'Object.getOwnPropertySymbols(obj)', Object.getOwnPropertySymbols(obj));
-console.log('Reflect.ownKeys(obj)', Reflect.ownKeys(obj));
-// example to add
+console.log(Object.getOwnPropertyNames(testObjKey), Object.keys(testObjKey), JSON.stringify(testObjKey));
 
-// 5. Symbol.for('x')登记机制，而Symbol('x')没有
-console.log(`Symbol.for('foo')===Symbol.for('foo')`, Symbol.for('foo') === Symbol.for('foo'));
-console.log(`Symbol.for('foo')===Symbol('foo')`, Symbol.for('foo') === Symbol('foo'));
-
-// Symbol.keyFor()返回一个已登记的Symbol类型的key
-var s1 = Symbol.for('foo2');
-var s2 = Symbol('foo2');
-console.log(Symbol.keyFor(s1), Symbol.keyFor(s2));
-
-var iframe = document.createElement('iframe');
-iframe.src = String(window.location);
-document.body.appendChild(iframe);
-
-console.log(`iframe.contentWindow.Symbol.for('foo')===Symbol.for('foo')`, iframe.contentWindow.Symbol.for('foo') === Symbol.for('foo'))
-
-// 6. to add
-// 7. to add
+console.log(Reflect.ownKeys(testObjKey)); // all attr
+// add example
 
 
+// 5.
+let ss1 = Symbol.for('foo'); // 被登记在全局环境供搜索
+let ss2 = Symbol.for('foo');
+console.log(ss1 === ss2);
+
+let ss3 = Symbol('FOO'); // 每次都生成一个新的Symbol值
+let ss4 = Symbol('FOO');
+console.log(ss3 === ss4);
+
+console.log(Symbol.keyFor(ss1), Symbol.keyFor(ss3));
+// to add example
+
+// 6. 模块的Singleton模式
+// to add example
 
 
-
-
-
+// 7.内置的Symbol值
+// to learn
 
 
 

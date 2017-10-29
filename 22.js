@@ -9,11 +9,4 @@ console.log(area(5), circumference(5), circleAS.area(5), circleAS.circumference(
 
 // export default import的时候是可以任意取名字的
 import exportDefaultFun from  './22-export-default'; // 匿名函数申明  优先写法
-import exportDefaultFunFoo3 from  './22-export-default-3';
-console.log(exportDefaultFun(), exportDefaultFunFoo3());
-
-import exportDefaultFun_ from  './22-export-default_';
-import exportDefaultFunFoo_2 from  './22-export-default_-2';
-import exportDefaultFunFoo_3 from  './22-export-default_-3';
-console.log(exportDefaultFun_(), exportDefaultFunFoo_3(), exportDefaultFunFoo_2());
-
+exportDefaultFun();
