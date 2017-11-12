@@ -2,7 +2,7 @@
  * Created by yangHuan on 17/9/14.
  */
 
-var promise = new Promise(function(resolve, reject) { // resolve,reject都是函数，不用自己部署
+var promise = new Promise(function(resolve, reject) {
     // ... code
 
     if (true) {/* 异步操作成功 */
@@ -21,15 +21,20 @@ promise.then(function(value) { // 成功，失败的回调写法1
 
 promise
     .then((value) => { // 成功，失败的回调写法2 better code
+        // 状态变为resolved执行
     })
     .catch((error) => {
+        // 状态变为rejected执行
+        // then方法的回调函数，运行中抛出错误
+        // Promise 对象的错误具有“冒泡”性质，会一直向后传递，直到被捕获为止。也就是说，错误总是会被下一个catch语句捕获。
+        // 一般总是建议，Promise 对象后面要跟catch方法，这样可以处理 Promise 内部发生的错误
     });
 
 
 // example1
 function timeout(ms) {
     return new Promise((resolve, reject) => {
-        setTimeout(resolve, ms, 'done55done55');
+        setTimeout(resolve, ms, 'why  to learn latter');
     });
 }
 timeout(0).then((value) => {
@@ -38,13 +43,13 @@ timeout(0).then((value) => {
 
 // example2
 var promise = new Promise(function(resolve, reject) { // 新建Promise 立即执行 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    console.log('Promise');
-    resolve('example2 resolve argument');
+    console.log('first ');
+    resolve('third ');
 });
 promise.then(function(value) {
-    console.log('resolved.' + value); // 当前脚本所有同步任务执行完才会执行
+    console.log('resolved. ' + value); // 当前脚本所有同步任务执行完才会执行
 });
-console.log('Hi!');
+console.log('second ');
 
 // example3
 function loadImageAsync(url) { // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -104,12 +109,12 @@ getJSON('./14.json').then(function(value) {
     console.log(`getJSON reject callback ${error}`);
 });
 
-// resolve函数的参数可以是一个Promise的实例
-// p1的状态是pending,p2的回调函数会等待p1的状态改变；
-// p1的状态已经是resolved,rejected,p2的回调函数才会立刻执行
-// example5 to learn latter
+// resolve函数的参数还可以是一个Promise的实例
+// p1的状态是pending, p2的回调函数会等待p1的状态改变；
+// p1的状态已经是resolved, p2的回调函数才会立刻执行
+// example5 to_learn latter
 var p1 = new Promise(function(resolve, reject) {
-    setTimeout(() => reject(new Error('fail')), 3000)
+    setTimeout(() => reject(new Error('fail  example5')), 3000)
 });
 var p2 = new Promise(function(resolve, reject) {
     setTimeout(() => resolve(p1), 1000)
@@ -119,7 +124,7 @@ p2
     .then(value => console.log(value))
     .catch(error => console.log(error));
 
-// example6
+// example6  调用resolve或reject并不会终结 Promise 的参数函数的执行
 new Promise((resolve, reject) => {
     resolve('_1');
     console.log('_2'); // 先执行
@@ -135,13 +140,69 @@ new Promise((resolve, reject) => {
 
 // Promise.prototype的方法then,catch
 
-// 3 then返回的是一个新的Promise实例
+// 3 then返回的是一个新的Promise实例    采用链式写法
 getJSON('./14.json').then((value) => {
-    console.log(JSON.stringify(value));
+    console.log('采用链式写法    ', JSON.stringify(value));
     return value.code; // 可以是一个Promise实例
 }).then((code) => console.log(code));
 
-// Promise.prototype.catch方法是.then(null, rejection) // to learn latter
+// Promise.prototype.catch方法是.then(null, ()=>{}) 别名
+getJSON('./142.json')
+    .then((value) => console.log('fulfilled: ,', value))
+    .catch((error) => console.log('rejected:  ,', error));
+
+getJSON('./143.json')
+    .then((value) => console.log('fulfilled: ,', value))
+    .then(null, (error) => console.log('rejected:  ,', error));
+
+// example2  catch的三种写法
+var promise1 = new Promise((resolve, reject) => {
+    throw new Error('test');
+});
+
+var promise2 = new Promise((resolve, reject) => {
+    try {
+        throw new Error('test');
+    } catch (ex) {
+        reject(ex);
+    }
+});
+
+var promise3 = new Promise((resolve, reject) => {
+    reject(new Error('test'));
+});
+
+promise1.catch((error) => {
+    console.log('catch1:  ,', error);
+});
+promise2.catch((error) => {
+    console.log('catch2:  ,', error);
+});
+promise3.catch((error) => {
+    console.log('catch3:  ,', error);
+});
+
+//  没有使用 catch方法指定错误处理的回调函数，Promise
+//  对象抛出的错误不会传递到外层代码，不会有任何反应
+const someAsyncThing = () => {
+    return new Promise((resolve, reject) => {
+        resolve(x + 2);
+    });
+};
+
+someAsyncThing().then(() => {
+    console.log('everythiing is great ' +
+        '不会退出进程、终止脚本执行' +
+        'Promise内部的错误不会影响到Promise外部的代码，Promise会吃掉错误')
+});
+
+someAsyncThing()
+    .then(() => {
+    })
+    .catch((error) => {
+        return console.log('catch捕获到错误       ：' + error);
+    });
+// to add example
 
 
 // 5. Promise.all(Array 成员是Promise实例)  都成功或者其一失败 才去执行then,catch
@@ -149,32 +210,34 @@ var promises = [1, 2, 3].map((item) => getJSON(`./promiseAllTest${item}.json`));
 
 Promise.all(promises)
     .then((value) => {
-        console.log(value)
+        // 等结果都返回了才会触发
+        console.log('Promise.all  ', value)
     })
     .catch((error) => {
         console.log(error)
     });
 
-// Promise.all   每个实例有自己的catch 并不会触发Promise.all()的catch方法  better code !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// Promise.all   每个实例有自己的catch 并不会触发Promise.all()的catch方法
 // 不会影响彼此的执行
-let test1 = getJSON('./promiseAllTest1.json')
-    .then(value => value)
-    .catch(error => error);
+// better code ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+let test1 = getJSON('./promiseAllTest11.json')
+    .then((value) => value)
+    .catch((error) => error);
 let test2 = getJSON('./promiseAllTest2.json')
-    .then(value => value)
-    .catch(error => error);
+    .then((value) => value)
+    .catch((error) => error);
 Promise.all([test1, test2])
-    .then(value => console.log(value))
+    .then(value => console.log('Promise.all  ', value))
     .catch(error => console.log(error));
 
 // Promise.all   实例没有自己的catch 才会触发Promise.all()的catch方法
 // 会影响整体的执行结果
 let test3 = getJSON('./promiseAllTest3.json')
     .then(value => value);
-let test4 = getJSON('./promiseAllTest4.json')
+let test4 = getJSON('./promiseAllTest2.json')
     .then(value => value);
 Promise.all([test3, test4])
-    .then(value => console.log(value))
+    .then(value => console.log('Promise.all', value))
     .catch(error => console.log(error));
 
 // 6. Promise.race() ??????????????????
@@ -197,5 +260,3 @@ racePromise.catch(ex => {
 // Promise.reject()
 
 // 10.
-
-
