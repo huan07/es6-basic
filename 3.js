@@ -36,10 +36,9 @@ console.log(x4, y4);
 //let [x5=y5,y5=1]=[]; console.log(x5,y5) // 怎么没有报错呢？？？？
 
 
-// 2. object 按照key；赋值的是：之后的变量，模式和变量同名，可以省略变量名
+// 2. object 按照key对value赋值，key和value同名，可以省略value,
 var { bar_1:bar_2, foo_1:foo_2, baz_1, baz_2 }={ bar_1: 'bar_2', foo_1: 'foo_2', baz_1: 'baz_1' };
 console.log(bar_2, foo_2, baz_1, baz_2); // baz_2 解构失败undefined
-//console.log(bar_1, foo_1); // bar_1 is not defined  error
 
 let {
     p:[x6, { y6 }]
@@ -133,17 +132,3 @@ example4({ x: 'x', y: 'y', z: 'z' });
 //(5) ...
 //(6)  to add
 //(7)  to add
-
-
-
-
-
-
-
-
-
-
-
-
-
-

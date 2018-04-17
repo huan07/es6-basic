@@ -1,7 +1,7 @@
 /**
  * Created by yangHuan on 17/10/17.
  */
-// 1.
+// 1. 对象的key有两种：字符串，Symbol类型
 let s1 = Symbol();
 console.log(s1, typeof s1, Object.prototype.toString.call(s1));
 
@@ -93,6 +93,3 @@ console.log(Symbol.keyFor(ss1), Symbol.keyFor(ss3));
 
 // 7.内置的Symbol值
 // to learn
-
-
-
