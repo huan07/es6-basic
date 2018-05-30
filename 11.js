@@ -2,7 +2,7 @@
  * Created by yangHuan on 17/9/12.
  */
 
-// Set数据结构
+// 构造函数，Set数据结构  成员的值是唯一的
 // 1. 键名 键值是同一个值
 const defineSet = new Set();
 const defineSet2 = new Set([1, 2, 3, 4, 4, 3, 2, 1]);
@@ -13,33 +13,32 @@ const a = NaN;
 const b = NaN;
 set4.add(a);
 set4.add(b);
-console.log(set4.size);
+console.log('两个NaN是相等的', set4.size);
 
 const set5 = new Set();
 set5.add({});
 console.log(set5.size);
 set5.add({});
-console.log('set5.add({}) again', set5.size);
+console.log('两个对象{}总是不相等的', set5.size);
 
 console.log('Set api usage!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 const set6 = new Set();
 set6.add(1).add(2).add(2).add(3);
-console.log(set6.size, set6.has(1), set6);
+console.log(set6.size, set6);
 set6.delete(1);
-console.log(set6.size);
+console.log(set6.size, set6.has(1), set6.has(2));
 set6.clear();
 console.log(set6.size);
-
 
 const items = new Set([1, 2, 3, 4, 3, 2]);
 const array1 = [...items];
 const array2 = Array.from(items);
-console.log('扩展运算符,   Array.from可以将 Set数据结构 转为数组!!!!!!!!!!!!!!!!!!!!!!!!!');
+console.log('扩展运算符,   [...xx],  Array.from(xx)可以将 Set数据结构 转为数组!!!!!!!!!!!!!!!!!!!!!!!!!');
 console.log(items, Object.prototype.toString.call(items));
 console.log(array1, Object.prototype.toString.call(array1));
 console.log(array2, Object.prototype.toString.call(array2));
 
-function dedupe(arr) {
+function dedupe(arr){
     return Array.from(new Set(arr));
 }
 const repeatedArr = [1, 2, '2', 2, 3];
@@ -48,16 +47,16 @@ console.log('去重数组的方式之二!!!!!!!!!!!!!!!!!!!!!!!!!!!', dedupe(rep
 
 console.log('keys(), values(), entries(),forEach()=============');
 const set7 = new Set(['red', 'green', 'blue']);
-for(let item of set7.keys()) {
+for (let item of set7.keys()) {
     console.log(item);
 }
-for(let item of set7.values()) { // 可以省略values() to add
+for (let item of set7.values()) { // 可以省略values() to add
     console.log(item);
 }
-for(let item of set7.entries()) {
+for (let item of set7.entries()) {
     console.log(item);
 }
-set7.forEach((value, key, self) => {
+set7.forEach((value, key, self) =>{
     console.log(`value=>${value},key=>${key},`)
 });
 
@@ -69,8 +68,8 @@ console.log(set8);
 let set9 = new Set([2, 4, 6, 8, 9, 11]);
 set9 = new Set([...set9].filter(x => x % 2 === 1));
 console.log(set9);
-console.log('Set => union intersect difference=========');
 
+console.log('Set => union intersect difference==数组并集==数组交集==数组差集===');
 const arr1 = [1, 2, 3];
 const arr2 = [2, 3, 4];
 const set1 = new Set(arr1);
@@ -84,8 +83,16 @@ console.log(union, intersect, difference);
 console.log(new Set(union), new Set(intersect), new Set(difference));
 
 
-// 2.WeakSet to add
-// 成员只能是对象
+// 2.WeakSet  成员只能是对象；它的对象都是弱引用；不可遍历
+{
+    let ws = new WeakSet();
+    // ws.add(1); error
+    // ws.add(Symbol()); error
+}
+
+{
+
+}
 
 
 // 3.Map   value-value的hash结构
@@ -113,23 +120,23 @@ console.log(defineMap2.size, defineMap2.has('name'), defineMap2.get('name'))
 // 简单类型的值，严格相等，Map结构才将其视为同一个key
 
 console.log('Map api usage: keys values entries forEach !!!!!!!!!!!!!!!!!!!');
-for(let key of defineMap2.keys()) {
+for (let key of defineMap2.keys()) {
     console.log(key);
 }
 
-for(let value of defineMap2.values()) {
+for (let value of defineMap2.values()) {
     console.log(value);
 }
 
-for(let item of defineMap2.entries()) {
+for (let item of defineMap2.entries()) {
     console.log(item[0], item[1], item);
 }
 
-for(let [key, value] of defineMap2.entries()) {
+for (let [key, value] of defineMap2.entries()) {
     console.log(key, value);
 }
 
-for(let [key, value] of defineMap2) {
+for (let [key, value] of defineMap2) {
     console.log(key, value);
 }
 
