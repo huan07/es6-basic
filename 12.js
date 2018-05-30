@@ -153,108 +153,124 @@ let proxy4 = new Proxy({}, handler4);
 
 
 // apply()
-var applyHandler = {
-    apply(target, ctx, args){
-        return Reflect.apply(...arguments);
-    }
-};
-
-// example
-var target = function(){
-    return 'i am the tartget';
-};
-var handler = {
-    apply() {
-        return 'i am the proxy';
-    },
-};
-var p = new Proxy(target, handler);
-console.log('apply example', p());
-
-var sum = function(left, right){
-    return left + right;
-};
-var twice = {
-    apply(target, ctx, args){
-        return Reflect.apply(...arguments) * 2;
-    }
-};
-var p2 = new Proxy(sum, twice);
-console.log('apply proxy,      ', p2(1, 3), p2.call(null, 5, 6), p2.call(null, 7, 8));
-console.log(Reflect.apply(p2, null, [9, 10]));
-
-
-// has()  对HasProperty拦截，对in 操作法生效
-var target = {
-    _prop: 'foo',
-    prop: 'a big foo you',
-};
-var hasHandler = {
-    has(target, key){
-        if (key[0] === '_') {
-            return false;
+{
+    var handler = {
+        apply(target, ctx, args){
+            return Reflect.apply(...arguments);
         }
-        return key in target;
-    },
-};
-var p3 = new Proxy(target, hasHandler);
-console.log('has proxy,       ', '_prop' in p3, 'prop' in p3);
-
-// 原对象不可配置或者禁止扩展，这时has拦截会报错
-var target4 = { a: 10 };
-Object.preventExtensions(target4);
-var p4 = new Proxy(target4, {
-    has(){
-        return false;
-    },
-});
-// console.log('a' in p4); error
-
-// has方法不对 HasOwnProperty拦截，  对for in 不生效
-const stu1 = {
-    name: '张三',
-    score: 59,
-};
-const stu2 = {
-    name: '李四',
-    score: 89,
-};
-var hasHandler = {
-    has(target, key){
-        if (key === 'score' && target[key] < 60) {
-            console.log(`${target.name}不及格`);
-            return false;
-        }
-        return key in target;
-    }
-};
-const oproxy1 = new Proxy(stu1, hasHandler);
-const oproxy2 = new Proxy(stu2, hasHandler);
-console.log('score' in oproxy1, 'score' in oproxy2);
-
-for (let stu1Key in oproxy1) {
-    console.log(stu1Key, oproxy1[stu1Key]);
+    };
 }
-for (let stu2Key in oproxy2) {
-    console.log(stu2Key, oproxy2[stu2Key]);  // 都会打印出来 has在这里不管用的
+{
+    // example
+    var target = function(){
+        return 'i am the tartget';
+    };
+    var handler = {
+        apply() {
+            return 'i am the proxy';
+        },
+    };
+    var p = new Proxy(target, handler);
+    console.log('apply example => ', p());
+}
+{
+    // example
+    var sum = function(left, right){
+        return left + right;
+    };
+    var twice = {
+        apply(target, ctx, args){
+            return Reflect.apply(...arguments) * 2;
+        }
+    };
+    var proxy = new Proxy(sum, twice);
+    console.log('proxy call apply example => ', proxy(1, 3), proxy.call(null, 5, 6), proxy.apply(null, [7, 8]));
+    console.log(Reflect.apply(proxy, null, [9, 10]));
+}
+
+
+// has()  对HasProperty拦截，对象是否有某个属性
+{
+    var target = {
+        _prop: 'foo',
+        prop: 'foo you',
+    };
+    var handler = {
+        has(target, key){
+            if (key[0] === '_') {
+                return false;
+            }
+            return key in target;
+        },
+    };
+    var proxy = new Proxy(target, handler);
+    console.log('has example => ', '_prop' in proxy, 'prop' in proxy);
+}
+{
+    // 原对象不可配置或者禁止扩展 has拦截会报错
+    var obj = { a: 10 };
+    Object.preventExtensions(obj);
+    var p = new Proxy(obj, {
+        has(target, prop){
+            return false;
+        },
+    });
+    console.log('has example => 2', 'a' in obj);// 说明什么？？
+}
+{
+    // 不判断属性来源 对in 操作符生效；对for...in循环不生效
+    const stu1 = {
+        name: '张三',
+        score: 59,
+    };
+    const stu2 = {
+        name: '李四',
+        score: 99,
+    };
+    var hasHandler = {
+        has(target, prop){
+            if (prop === 'score' && target[prop] < 60) {
+                console.log(`${target.name}不及格`);
+                return false;
+            }
+            return prop in target;
+        }
+    };
+    const oproxy1 = new Proxy(stu1, hasHandler);
+    const oproxy2 = new Proxy(stu2, hasHandler);
+    console.log('score' in oproxy1, 'score' in oproxy2);
+
+    for (let a in oproxy1) {
+        console.log(a, oproxy1[a]);
+    }
+    for (let b in oproxy2) {
+        console.log(b, oproxy2[b]);  // 都会打印出来 has在这里不管用的
+    }
 }
 
 // construct() 拦截new命令
-var handler = {
-    constructor(target, args, newTarget){
-        return new target(...args);
-    },
-};
-var p = new Proxy(function(){
-}, {
-    constructor: function(target, args){
-        console.log('called: ' + args.join(', '));
-        return { // 返回的必须是一个对象，否则会报错
-            value: args[0] * 10,
-        };
-    }
-});
-(new p(1)).value;  // 为啥没有打印出来呢？
+{
+    var handler = {
+        constructor(target, args, newTarget){
+            return new target(...args);
+        },
+    };
+}
+{
+    // example
+    var P = new Proxy(function(){
+    }, {
+        constructor: function(target, args){
+            console.log('called:?? ' + args.join(', '));
+            return { // 返回的必须是一个对象，否则会报错
+                value: args[0] * 10,
+            };
+        }
+    });
+    var yy = new P(1); // 并不管用啊？？？？
+    console.log('construct example => ', yy, yy.value,);
+}
+
 
 // deleteProperty() 拦截delete操作，
 var handler = {
