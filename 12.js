@@ -2,32 +2,32 @@
  * Created by yangHuan on 17/10/20.
  */
 
-// var proxy = new Proxy(target,handler);
+var proxy = new Proxy(target = {}, handler = {});
 
 var proxy = new Proxy({}, {
-    get: function(target, property) {
+    get: function(target, property){
         return 35;
     }
 });
 console.log(proxy, proxy.time, proxy.name);
 
 var target = {};
-var handler = {}; // 直接通向原对象
+var handler = {}; // 直接通向原对象，没有拦截
 var proxy = new Proxy(target, handler);
 proxy.a = 'b';
-console.log(target.a);
+console.log('没有拦截 => ', target.a);
 
 //
 var object = { proxy: new Proxy(target, handler) };
 
 //
-var proxy2 = new Proxy({}, {
-    get: function(target, property) {
+var proxy = new Proxy({}, {
+    get: function(target, property){
         return 3535;
     }
 });
-let obj2 = Object.create(proxy2);
-console.log(obj2.time);
+let obj2 = Object.create(proxy); // 作为obj2的原型
+console.log('proxy作为原型 => ', obj2.time);
 // to add example
 
 
@@ -37,65 +37,59 @@ var person = {
     name: '张三',
 };
 var proxy = new Proxy(person, {
-    get: function(target, property) {
+    get: function(target, property){
         if (property in target) {
             return target[property];
         } else {
-            throw new Error('property not in target');
+            throw new ReferenceError('property not in target');
         }
     }
 });
 // console.log(proxy.age);
-console.log(proxy.name);
+console.log('proxy.name => ', proxy.name);
 
 var proto = new Proxy({}, {
-    get(target, propertyKey, receiver){
-        console.log('get ' + propertyKey);
-        return target[propertyKey];
+    get(target, property, receiver){
+        console.log('get property' + property);
+        return target[property];
     }
 });
 var obj = Object.create(proto); // get方法继承
 obj.yy;
 
 //
-function createArray(...elements) {
-    let handler = {
-        get(target, propertyKey, receiver){
-            let index = Number(propertyKey);
+function createArray(...elements){
+    const handler = {
+        get(target, property, receiver){
+            let index = Number(property);
             if (index < 0) {
-                propertyKey = String(target.length + index);
+                property = String(target.length + index);
             }
-            return Reflect.get(target, propertyKey, receiver);// ？？？？？？？？？？？？？？？？？？？？？
+            return Reflect.get(target, property, receiver);// ？？？？？？？？？？？？？？？？？？？？？
         }
     };
 
-    let target = [];
+    const target = [];
     target.push(...elements);
     return new Proxy(target, handler);
 }
 
 let arr = createArray('a', 'b', 'c');
-console.log(arr[-2]);
+console.log(arr[-1], arr[-2], arr[-3]);
 
+// to add example
 // to add example
 
 
 // set()
 let validator = {
-    get: function(obj, prop) {
-        if (prop in obj) {
-            return obj[prop];
-        } else {
-            throw new Error('property not in target');
-        }
-    },
-    set: function(obj, prop, value) {
+    set: function(obj, prop, value){
         if (prop === 'age') {
             if (!Number.isInteger(value)) {
-                throw new Error('age value is not integer');
+                throw new TypeError('age value is not integer');
             }
             if (value > 200) {
-                throw new Error('value>200 is invalid');
+                throw new RangeError('value > 200 is invalid');
             }
         }
         obj[prop] = value;
@@ -116,7 +110,7 @@ let handler3 = {
         return true;
     }
 };
-function invariant(key, action) {
+function invariant(key, action){
     if (key[0] === '_') {
         throw new Error(`Invalid attempt to ${action} private "${key}" property`);
     }
@@ -124,17 +118,39 @@ function invariant(key, action) {
 let target3 = {};
 let proxy3 = new Proxy(target3, handler3);
 //proxy3._prop;
-//proxy3.prop = 'c';？？？？？？？？？？？？？？？
-//console.log(proxy3);
+proxy3.prop = '3';
+console.log('proxy3 => ', proxy3);
 
 let handler4 = {
-    set: function(obj, prop, value, receiver) {
+    set: function(obj, prop, value, receiver){
         obj[prop] = receiver;
     }
 };
 let proxy4 = new Proxy({}, handler4);
 //proxy4.foo = 'bar';？？？？？？？？？？？？
 //console.log(proxy4.foo === proxy4);
+// to add example
+
+// 目标对象的某个属性，不可写不可配置，set方法不起作用
+{
+    const obj = {};
+    Object.defineProperty(obj, 'foo', {
+        value: 'foo',
+        writable: false,
+    });
+    const handler = {
+        set(obj, prop, vaue, receiver){
+            obj[prop] = 'baz';
+        }
+    };
+
+    const proxy = new Proxy(obj, handler);
+    console.log('proxy = >', proxy);
+    //  proxy.foo='bazbaz'; error
+
+    console.log('proxy after = >', proxy);
+}
+
 
 // apply()
 var applyHandler = {
@@ -144,7 +160,7 @@ var applyHandler = {
 };
 
 // example
-var target = function() {
+var target = function(){
     return 'i am the tartget';
 };
 var handler = {
@@ -155,7 +171,7 @@ var handler = {
 var p = new Proxy(target, handler);
 console.log('apply example', p());
 
-var sum = function(left, right) {
+var sum = function(left, right){
     return left + right;
 };
 var twice = {
@@ -216,10 +232,10 @@ const oproxy1 = new Proxy(stu1, hasHandler);
 const oproxy2 = new Proxy(stu2, hasHandler);
 console.log('score' in oproxy1, 'score' in oproxy2);
 
-for(let stu1Key in oproxy1) {
+for (let stu1Key in oproxy1) {
     console.log(stu1Key, oproxy1[stu1Key]);
 }
-for(let stu2Key in oproxy2) {
+for (let stu2Key in oproxy2) {
     console.log(stu2Key, oproxy2[stu2Key]);  // 都会打印出来 has在这里不管用的
 }
 
@@ -229,9 +245,9 @@ var handler = {
         return new target(...args);
     },
 };
-var p = new Proxy(function() {
+var p = new Proxy(function(){
 }, {
-    constructor: function(target, args) {
+    constructor: function(target, args){
         console.log('called: ' + args.join(', '));
         return { // 返回的必须是一个对象，否则会报错
             value: args[0] * 10,
@@ -247,7 +263,7 @@ var handler = {
         return true;
     }
 };
-function invariant(key, action) {
+function invariant(key, action){
     if (key[0] === '_') {
         throw new Error(`Invalid attempt to ${action} private "${key}" property`);
     }
@@ -342,7 +358,7 @@ var target = {
     prop3: 'prop3',
 };
 var proxy = new Proxy(target, handler);
-for(let key of Object.keys(proxy)) {
+for (let key of Object.keys(proxy)) {
     console.log(target[key]);
 }
 
@@ -439,7 +455,7 @@ var handler = {
     }
 };
 var proto = {};
-var target = function() {
+var target = function(){
 
 };
 var proxy = new Proxy(target, handler);
