@@ -273,140 +273,155 @@ let proxy4 = new Proxy({}, handler4);
 
 
 // deleteProperty() 拦截delete操作，
-var handler = {
-    deleteProperty(target, key){
-        invariant(key, 'delete');
-        return true;
+{
+    var handler = {
+        deleteProperty(target, key){
+            invariant(key, 'delete');
+            return true;
+        }
+    };
+
+    function invariant(key, action){
+        if (key[0] === '_') {
+            throw new Error(`Invalid attempt to ${action} private "${key}" property`);
+        }
     }
-};
-function invariant(key, action){
-    if (key[0] === '_') {
-        throw new Error(`Invalid attempt to ${action} private "${key}" property`);
-    }
+
+    var target = { _prop: 'foo', prop: 'foo you' };
+    var proxy = new Proxy(target, handler);
+    delete proxy.prop;
+    console.log('deleteProperty => ', proxy);
 }
-var target = { _prop: 'foo', prop: 'foo you' };
-var proxy = new Proxy(target, handler);
-delete proxy.prop;
-console.log(proxy);
+
 
 // defineProperty() 拦截 Object.defineProperty操作
-var handler = {
-    defineProperty(target, key, descriptor){
-        return false;
-    }
-};
-var target = {};
-var proxy = new Proxy(target, handler);
-// proxy.foo='bar'; 会报错的
+{
+    var handler = {
+        defineProperty(target, key, descriptor){
+            return false;
+        }
+    };
+    var target = {};
+    var proxy = new Proxy(target, handler);
+    // proxy.foo='bar'; // 会报错的
+}
 
 
 // getOwnPropertyDescriptor() 拦截Object.getOwnPropertyDescriptor
-var handler = {
-    getOwnPropertyDescriptor(target, key){
-        if (key[0] === '_') {
-            return;
+{
+    var handler = {
+        getOwnPropertyDescriptor(target, key){
+            if (key[0] === '_') {
+                return;
+            }
+            return Object.getOwnPropertyDescriptor(target, key);
         }
-        return Object.getOwnPropertyDescriptor(target, key);
-    }
-};
-var target = { _foo: 'foo', baz: 'baz' };
-var proxy = new Proxy(target, handler);
-console.log(
-    Object.getOwnPropertyDescriptor(proxy, 'baz'),
-    Object.getOwnPropertyDescriptor(proxy, '_foo'),
-    Object.getOwnPropertyDescriptor(proxy, 'wat')
-);
+    };
+    var target = { _foo: 'foo', baz: 'baz' };
+    var proxy = new Proxy(target, handler);
+    console.log('getOwnPropertyDescriptor => ');
+    console.log(
+        Object.getOwnPropertyDescriptor(proxy, 'baz'),
+        Object.getOwnPropertyDescriptor(proxy, '_foo'),
+        Object.getOwnPropertyDescriptor(proxy, 'wat')
+    );
+}
 
 
 // getPrototypeOf 拦截获取对象原型
-var proto = {};
-var proxy = new Proxy({}, {
-    getPrototypeOf(target){
-        return proto;
-    }
-});
-console.log(
-    Object.getPrototypeOf(proxy) === proto
-);
-
-// isExtensible 拦截Object.isExtensible
-var proxy = new Proxy({}, {
-    isExtensible(target){
-        console.log('called');
-        return true; // 返回 false 调用时会报错
-    }
-});
-Object.isExtensible(proxy);
-console.log(
-    '强限制,    ',
-    Object.isExtensible(proxy) === Object.isExtensible({})
-);
-
-// ownKeys 拦截对象自身属性的读取；Object.getOwnPropertyNames()
-var handler = {
-    ownKeys(target){
-        return ['a', 'b'];
-    }
-};
-var target = {
-    a: 1,
-    b: 2,
-    c: 3,
-};
-var proxy = new Proxy(target, handler);
-console.log(
-    Object.keys(proxy)
-);
-
-// example 2
-var handler = {
-    ownKeys(target){
-        return Reflect.ownKeys(target).filter((key) => key[0] !== '_');
-    }
-};
-var target = {
-    _foo: 'foo',
-    _foo2: 'foo2',
-    _foo3: 'foo3',
-    _foo4: 'foo4',
-    prop: 'prop',
-    prop2: 'prop2',
-    prop3: 'prop3',
-};
-var proxy = new Proxy(target, handler);
-for (let key of Object.keys(proxy)) {
-    console.log(target[key]);
+{
+    var proto = {};
+    var proxy = new Proxy({}, {
+        getPrototypeOf(target){
+            return proto;
+        }
+    });
+    console.log('getPrototypeOf => ', Object.getPrototypeOf(proxy) === proto);
 }
 
-// example 3 Object.keys 有三类属性会被自动过滤
-var handler = {
-    ownKeys(target){
-        return ['a', 'd', Symbol.for('secret'), 'key'];
-    }
-};
-var target = {
-    a: 1,
-    b: 2,
-    c: 3,
-    [Symbol.for('secret')]: 4,
-};
-Object.defineProperty(target, 'key', {
-    enumerable: false,
-    configurable: true,
-    writable: true,
-    value: 'static'
-});
-var proxy = new Proxy(target, handler);
-console.log(Object.keys(proxy));
 
-var proxy = new Proxy({}, {
-    ownKeys(target){
-        return ['a', 'b', 'c']; // 返回的数组成员，只能是字符串或 Symbol 值；其他类型会报错
+// isExtensible 拦截Object.isExtensible
+{
+    var proxy = new Proxy({}, {
+        isExtensible(target){
+            console.log('called');
+            return true; // 返回 false 调用时会报错
+        }
+    });
+    Object.isExtensible(proxy);
+    console.log(
+        '强限制,    ',
+        Object.isExtensible(proxy) === Object.isExtensible({})
+    );
+}
+
+// ownKeys 拦截对象自身属性的读取；Object.getOwnPropertyNames()
+{
+    // example
+    let target = {
+        a: 1,
+        b: 2,
+        c: 3,
+    };
+    let handler = {
+        ownKeys(target){
+            return ['a', 'b'];
+        }
+    };
+    var proxy = new Proxy(target, handler);
+    console.log('Object.keys => ', Object.keys(proxy));
+}
+{
+    // example 2
+    let target = {
+        _foo: 'foo',
+        _foo2: 'foo2',
+        prop: 'prop',
+    };
+    let handler = {
+        ownKeys(target){
+            return Reflect.ownKeys(target).filter((key) => key[0] !== '_');
+        }
+    };
+    let proxy = new Proxy(target, handler);
+    for (let key of Object.keys(proxy)) {
+        console.log('let i of {} => ', target[key]);
     }
-});
-console.log(
-    Object.getOwnPropertyNames(proxy)
-);
+}
+{
+    // example 3 Object.keys 有三类属性会被自动过滤
+    let target = {
+        a: 1,
+        b: 2,
+        c: 3,
+        [Symbol.for('secret')]: 4,
+    };
+    Object.defineProperty(target, 'key', {
+        enumerable: false,
+        configurable: true,
+        writable: true,
+        value: 'static'
+    });
+    let handler = {
+        ownKeys(target){
+            return ['a', 'd', Symbol.for('secret'), 'key'];
+        }
+    };
+    let proxy = new Proxy(target, handler);
+    console.log('Object.keys => ', Object.keys(proxy));
+}
+{
+    // example
+    var proxy = new Proxy({}, {
+        ownKeys(target){
+            return ['a', 'b', 'c'];
+        }
+    });
+    console.log('Object.getOwnPropertyNames() => ', Object.getOwnPropertyNames(proxy));
+}
+
+// to add to add to add
+
 
 // example 4
 // 'a'是不可配置的属性，必须被返回，否则会报错
@@ -507,14 +522,3 @@ console.log(
 
 
 // 5.
-
-
-
-
-
-
-
-
-
-
-
