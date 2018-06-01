@@ -2,85 +2,102 @@
  * Created by yangHuan on 17/9/12.
  */
 
-// 构造函数，Set数据结构  成员的值是唯一的
+// 构造函数，Set数据结构  成员的值是唯一的(可以用来数组去重)
 // 1. 键名 键值是同一个值
 const defineSet = new Set();
 const defineSet2 = new Set([1, 2, 3, 4, 4, 3, 2, 1]);
 
 // NaN等于自身，两个对象总是不想等的 !!!!!!!!!!!!
-const set4 = new Set();
-const a = NaN;
-const b = NaN;
-set4.add(a);
-set4.add(b);
-console.log('两个NaN是相等的', set4.size);
-
-const set5 = new Set();
-set5.add({});
-console.log(set5.size);
-set5.add({});
-console.log('两个对象{}总是不相等的', set5.size);
-
-console.log('Set api usage!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-const set6 = new Set();
-set6.add(1).add(2).add(2).add(3);
-console.log(set6.size, set6);
-set6.delete(1);
-console.log(set6.size, set6.has(1), set6.has(2));
-set6.clear();
-console.log(set6.size);
-
-const items = new Set([1, 2, 3, 4, 3, 2]);
-const array1 = [...items];
-const array2 = Array.from(items);
-console.log('扩展运算符,   [...xx],  Array.from(xx)可以将 Set数据结构 转为数组!!!!!!!!!!!!!!!!!!!!!!!!!');
-console.log(items, Object.prototype.toString.call(items));
-console.log(array1, Object.prototype.toString.call(array1));
-console.log(array2, Object.prototype.toString.call(array2));
-
-function dedupe(arr){
-    return Array.from(new Set(arr));
+{
+    const set = new Set();
+    const a = NaN;
+    const b = NaN;
+    set.add(a);
+    set.add(b);
+    console.log('1.两个NaN是相等的 ＝>', set.size);
 }
-const repeatedArr = [1, 2, '2', 2, 3];
-console.log('去重数组的方式之一!!!!!!!!!!!!!!!!!!!!!!!!!!!', [...new Set(repeatedArr)]);
-console.log('去重数组的方式之二!!!!!!!!!!!!!!!!!!!!!!!!!!!', dedupe(repeatedArr));
-
-console.log('keys(), values(), entries(),forEach()=============');
-const set7 = new Set(['red', 'green', 'blue']);
-for (let item of set7.keys()) {
-    console.log(item);
+{
+    const set = new Set();
+    set.add({});
+    console.log('2.两个对象{}总是不相等的 =>', set.size);
+    set.add({});
+    console.log(set.size);
 }
-for (let item of set7.values()) { // 可以省略values() to add
-    console.log(item);
+{
+    const set = new Set();
+    set.add(1).add(2).add(2).add(3);
+    console.log('add size example => ', set.size, set);
+
+    set.delete(1);
+    console.log('delete size example => ', set.has(1), set.has(2));
+
+    set.clear();
+    console.log('clear size example => ', set.size);
 }
-for (let item of set7.entries()) {
-    console.log(item);
+
+// 数组去重：数组作为参数转换为Set数据结构，Set再被转换为数组
+// 扩展运算符[...xx],  Array.from(xx)可以将 Set数据结构 转为数组
+{
+    function dedupe(arr){
+        return Array.from(new Set(arr));
+    }
+
+    const array = [1, 2, '2', 2, 3];
+    const items = new Set(array);
+    const xx = [...items];
+    const yy = dedupe(array);
+    console.log(Object.prototype.toString.call(items));
+    console.log('去重数组的方式之一 => ', xx, Object.prototype.toString.call(xx));
+    console.log('去重数组的方式之二 =>', yy, Object.prototype.toString.call(yy));
 }
-set7.forEach((value, key, self) =>{
-    console.log(`value=>${value},key=>${key},`)
-});
 
-console.log('map,filter  use in Set=========================== ');
-let set8 = new Set([1, 2, 3]);
-set8 = new Set([...set8].map(x => x + 10));
-console.log(set8);
+// keys(), values(), entries(),forEach()
+{
+    const set = new Set(['red', 'green', 'blue']);
+    for (let item of set.keys()) {
+        console.log(item);
+    }
+    for (let item of set.values()) { // 可以省略values() to add to add
+        console.log(item);
+    }
+    for (let item of set) {
+        console.log(item);
+    }
 
-let set9 = new Set([2, 4, 6, 8, 9, 11]);
-set9 = new Set([...set9].filter(x => x % 2 === 1));
-console.log(set9);
+    for (let item of set.entries()) {
+        console.log(item);
+    }
 
-console.log('Set => union intersect difference==数组并集==数组交集==数组差集===');
-const arr1 = [1, 2, 3];
-const arr2 = [2, 3, 4];
-const set1 = new Set(arr1);
-const set2 = new Set(arr2);
+    set.forEach((value, key, self) =>{
+        console.log(`value=>${value},key=>${key},`)
+    });
+}
 
-const union = [... new Set([...arr1, ...arr2])]; // 数组并集
-const intersect = arr1.filter((item) => set2.has(item));  //   数组交集
-const difference = arr1.filter((item) => !set2.has(item));  // 数组差集
+// map filter 间接用于Set
+{
+    let set = new Set([1, 2, 3]);
+    set = new Set([...set].map(x => x + 100));
+    console.log(set);
+}
+{
+    let set = new Set([2, 4, 9, 11]);
+    set = new Set([...set].filter(x => x % 2 === 1));
+    console.log(set);
+}
+{
+    console.log('Set => union intersect difference==数组并集==数组交集==数组差集===');
+    const arr1 = [1, 2, 3];
+    const arr2 = [2, 3, 4];
+    const set1 = new Set(arr1);
+    const set2 = new Set(arr2);
 
-console.log(union, intersect, difference);
-console.log(new Set(union), new Set(intersect), new Set(difference));
+    const union = [...new Set([...arr1, ...arr2])]; // 数组并集
+    const intersect = arr1.filter((item) => set2.has(item));  //   数组交集
+    const difference = arr1.filter((item) => !set2.has(item));  // 数组差集
+
+    console.log(union, intersect, difference);
+    console.log(new Set(union), new Set(intersect), new Set(difference));
+}
 
 
 // 2.WeakSet  成员只能是对象；它的对象都是弱引用；不可遍历
