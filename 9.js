@@ -6,52 +6,59 @@ import React from 'react';
 import { render, } from 'react-dom';
 
 // 1
-var foo = 'bar';
-var baz = { foo, };
-console.log(baz);
+{
+    var foo = 'bar';
+    var baz = { foo };
+    console.log(baz);
 
-var o = { // !!!!
-    method(){
-        return 'method简写; ';
-    }
-};
-var o_ = {
-    method: function() {
-        return 'method _ es2015; ';
-    }
-};
-var o__ = { // !!!!
-    method: () => {
-        return 'method简写 _结合箭头函数; ';
-    }
-};
-console.log(o.method(), o_.method(), o__.method());
+    var o = { // !!!!
+        method(){
+            return 'method简写; ';
+        }
+    };
+    var o_ = {
+        method: function(){
+            return 'method _es2015; ';
+        }
+    };
+    var o__ = { // !!!!
+        method: () =>{
+            return 'method简写 _结合箭头函数; ';
+        }
+    };
+    console.log(o.method(), o_.method(), o__.method());
+}
 
 // CommonJS 模块  to add
 
-// 2 属性名表达式赋值，取值  !!!!!!!!!!!!
-let propKey = 'foo';
-let obj = { // ES6 允许字面量定义对象时,用表达式作为对象的属性名，在 ES5 中不支持
-    [propKey]: true,
-    ['a' + 'bc']: 123,
-    '_hc.v': '_hc.v',
-    ['h' + 'ello'](){
-        return 'hello function';
-    }
-};
-console.log('obj', obj, obj[propKey], obj[`abc`], obj.hello());
+// 2 字面量定义对象 属性名表达式赋值，取值
+{
+    let propKey = 'foo';
+    let obj = { // ES6 允许字面量定义对象时,用表达式作为对象的属性名，在 ES5 中不支持
+        [propKey]: true,
+        ['a' + 'bc']: 123,
+        '_hc.v': '_hc.v',
+        ['h' + 'ello'](){
+            return 'hi';
+        }
+    };
+    console.log('字面量定义对象 => ', obj, obj[propKey], obj['foo'], obj[`abc`], obj.hello());
+}
+
 // 属性名表达式与简洁表示法，不能同时使用，会报错
 /*obj={
  [propKey],
  }*/
 
-const keyA = { a: 1 };
-const keyB = { b: 2 };
-const myObject = {
-    [keyA]: 'valueA',
-    [keyB]: 'valueB'
-};
-console.log('myObject', myObject);
+{
+    const keyA = { a: 1 };
+    const keyB = { b: 2 };
+    const myObject = {
+        [keyA]: 'valueA',
+        [keyB]: 'valueB'
+    };
+    console.log('myObject', myObject);
+}
 
 // 3  to add
 
@@ -98,7 +105,7 @@ console.log('target浅拷贝', target);
 // 1.为对象添加属性 to add
 // 2.         方法 to add
 // 3.克隆对象   要克隆它的继承值 to add
-function clone(origin) {
+function clone(origin){
     return Object.assign({}, origin)
 }
 console.log("clone({a:'clone'})", clone({ a: 'clone' }));
@@ -125,7 +132,7 @@ const DEFAULTS = {
     },
 };
 
-function processContent(options) {
+function processContent(options){
     options = Object.assign({}, DEFAULTS, options); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 深拷贝 to add
     console.log(options)
 }
