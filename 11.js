@@ -100,75 +100,112 @@ const defineSet2 = new Set([1, 2, 3, 4, 4, 3, 2, 1]);
 }
 
 
-// 2.WeakSet  成员只能是对象；它的对象都是弱引用；不可遍历
+// 2.WeakSet 它的对象都是弱引用；不可遍历
 {
-    let ws = new WeakSet();
+    const ws = new WeakSet();
     // ws.add(1); error
     // ws.add(Symbol()); error
 }
 
 {
+    const ws = new WeakSet();
 
+    const a = [[1, 2], [3, 4]];
+    const ws2 = new WeakSet(a); // 参数是数组，或类数组对象；成员只能是对象
 }
 
 
 // 3.Map   value-value的hash结构
-const data = {};
-const element = document.getElementById('app');
-data[element] = 'metadata';
-console.log('data', data);
+{
+    const data = {};
+    const element = document.getElementById('app');
+    data[element] = 'metadata'; // 非字符串的key 在后台被自动转换为 字符串值
+    console.log('data => ', data, data['[object HTMLDivElement]']);
+}
 
-console.log('Map api usage: size set get has delete clear !!!!!!!!!!!!!!!!!!!');
-const defineMap = new Map();
-const o = { p: 'hello baidu' };
-defineMap.set(o, 'baidu');  // 返回整个 Map 结构
-console.log('defineMap.get(o)=>', defineMap.get(o), defineMap.size);
-console.log(defineMap.has(o), defineMap);
-defineMap.delete(o);
-console.log(defineMap.has(o));
-
-const defineMap2 = new Map([
-    ['name', '张三'],
-    ['title', 'author']
-]); // 每个成员是一个双元素的数组
-console.log(defineMap2.size, defineMap2.has('name'), defineMap2.get('name'))
-
+// set get size has delete clear
 // 引用类型值，按内存地址 对同一个对象的引用，Map结构才将其视为同一个key
 // 简单类型的值，严格相等，Map结构才将其视为同一个key
+// keys values entries forEach
+{
+    const defineMap = new Map();
+    const o = { p: 'hello baidu' };
+    defineMap.set(o, 'baidu');  // 返回整个 Map 结构
+    console.log('defineMap.get(o)=>', defineMap.get(o), defineMap.size);
 
-console.log('Map api usage: keys values entries forEach !!!!!!!!!!!!!!!!!!!');
-for (let key of defineMap2.keys()) {
-    console.log(key);
+    console.log(defineMap.has(o), defineMap);
+    defineMap.delete(o);
+    console.log(defineMap.has(o));
+}
+{
+    const defineMap2 = new Map([
+        ['name', '张三'],
+        ['title', 'author']
+    ]); // 每个成员是一个双元素的数组
+    console.log(defineMap2.size, defineMap2.has('name'), defineMap2.get('name'));
+
+    for (let key of defineMap2.keys()) {
+        console.log('1=>', key);
+    }
+
+    for (let value of defineMap2.values()) {
+        console.log('2=>', value);
+    }
+
+    for (let item of defineMap2.entries()) {
+        console.log('3=>', item[0], item[1], item);
+    }
+
+    for (let [key, value] of defineMap2.entries()) {
+        console.log('4=>', key, value);
+    }
+
+    for (let [key, value] of defineMap2) {
+        console.log('44=>', key, value);
+    }
+
+    console.log(defineMap2.entries);
+
+    console.log(defineMap2, defineMap2.keys(), defineMap2.values(), defineMap2.entries());
+    console.log('Map结构转换为数组  扩展运算符[... Map]');
+    console.log([...defineMap2], [...defineMap2.keys()], [...defineMap2.values()], [...defineMap2.entries()]);
 }
 
-for (let value of defineMap2.values()) {
-    console.log(value);
+// Map的遍历和过滤 map, filter
+{
+    const map0 = new Map()
+        .set(1, 'a')
+        .set(2, 'b')
+        .set(3, 'c');
+    const array0 = [...map0];
+
+    const array1 = array0.filter(([k, v]) => k <= 2);
+
+    const array2 = array0.map(([k, v]) => [k + 100, v + 'z']);
+
+    console.log('array1 => ', array1, new Map(array1), array2, new Map(array2))
+}
+// to add example
+
+
+// Map <=> Array
+{
+    const map = new Map()
+        .set(true, 7)
+        .set({ foo: 3 }, ['abc'])
+        .set(undefined, 'undefined');
+    console.log('Map <=> Array', map, [...map]);
+
+    const arr = [[true, 7], [{ foo: 3 }, ['abc']]];
+    console.log(new Map(arr), arr);
 }
 
-for (let item of defineMap2.entries()) {
-    console.log(item[0], item[1], item);
+// Map <=> Object
+{
+    function xx(){
+
+    }
 }
 
-for (let [key, value] of defineMap2.entries()) {
-    console.log(key, value);
-}
-
-for (let [key, value] of defineMap2) {
-    console.log(key, value);
-}
-
-console.log(defineMap2, defineMap2.keys(), defineMap2.values(), defineMap2.entries(), defineMap2.entries);
-console.log('Map结构转换为数组  ...运算符');
-console.log([...defineMap2], [...defineMap2.keys()], [...defineMap2.values()], [...defineMap2.entries()])
-
-
-console.log('Map与其他数据结构的转换!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-// Map  Array
-const arrMap = new Map()
-    .set(true, 'true')
-    .set(undefined, 'undefined');
-console.log(arrMap, [...arrMap]);
-const arr = [[1, 1], [2, 2]];
-console.log(new Map(arr), arr);
 
 // to add
