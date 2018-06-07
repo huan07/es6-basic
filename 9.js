@@ -72,34 +72,62 @@ console.log("Object.is(-0,0)", Object.is(-0, 0), "  -0===0", -0 === 0);
 console.log("Object.is(NaN,NaN)", Object.is(NaN, NaN), "NaN===NaN", NaN === NaN);
 // ES5 可以通过下面的代码，部署Object.is   to add
 
-// 5
-var target = { a: 1, b: 1 };
-var source1 = { b: 2, c: 2 };
-var source2 = { c: 3 };
-Object.assign(target, source1, source2); // 到某个对象
-console.log('Object.assign(target,x,y)', target);
 
-var obj2 = { a: 1 };
-console.log('Object.assign(obj2)===obj2', Object.assign(obj2) === obj2);
+// 5 只拷贝源对象的自身属性，
+// 不拷贝继承属性，
+// 不拷贝不可枚举属性
+{
+    const target = { a: 1, b: 1 };
 
-// undefined,null无法转成对象，作为首参数会报错；但是＝》可以作为第二，第三参数的；无法转为对象，跳过
-//console.log(Object.assign(undefined));
-//console.log(Object.assign(null));
-console.log('Object.assign(obj2,undefined)', Object.assign(obj2, undefined), Object.assign(obj2, undefined) === obj2);
-console.log('Object.assign(obj2,null)', Object.assign(obj2, null), Object.assign(obj2, null) === obj2);
-console.log(Object.assign({}, 3), Object.assign({}, true), Object.assign({}, '33'));
+    const source1 = { b: 2, c: 2 };
+    const source2 = { c: 3 };
 
+    const xx = Object.assign(target, source1, source2); // 拷贝到目标对象，返回的是目标对象的值！！！！
+    console.log('返回的是目标对象！！！！', xx);
+    console.log('target => ', target);
+}
 
-// Object.assign浅拷贝 拷贝的是对象的引用
-var obj1 = { a: { b: 1 } };
-var obj2 = Object.assign({}, obj1);  // 返回一个新对象
-obj1.a.b = 'bb';
-console.log('obj2.a.b 浅拷贝', obj2.a.b);
+// 只有一个参数，直接返回这个参数
+{
+    const obj = { a: 1 };
+    console.log('Object.assign(obj)===obj', Object.assign(obj) === obj);
 
-var target = { a: { b: 'c', d: 'e' } };
-var source = { a: { b: 'hello' } };
-Object.assign(target, source);
-console.log('target浅拷贝', target);
+    console.log('参数不是对象，会被转换为对象', Object.assign(2));
+
+    // undefined,null无法转成对象，作为首参数会报错；但是可以作为第二，第三参数的；无法转为对象，跳过
+    //console.log(Object.assign(undefined)); error
+    //console.log(Object.assign(null)); error
+    console.log(Object.assign(obj, undefined), Object.assign(obj, undefined) === obj);
+    console.log(Object.assign(obj, null), Object.assign(obj, null) === obj);
+
+    console.log('源对象无法转为对象，不会对目标对象有效果', Object.assign({}, 3), Object.assign({}, true));
+    console.log('字符串以数组的形式 拷贝到目标对象', Object.assign({}, '36'));
+}
+
+// Object.assign浅拷贝 目标对象 拷贝的是 源对象的引用
+{
+    const obj1 = { a: { b: 1 } };
+    const obj2 = Object.assign({}, obj1);
+    obj1.a.b = 'bb';
+    console.log('浅拷贝', obj2.a.b);
+}
+
+// 同名属性整体替换
+{
+    const target = { a: { b: 'c', d: 'e' } };
+    const source = { a: { b: 'hello' } };
+    Object.assign(target, source);
+    console.log(target);
+}
+
+// 数组的处理
+{
+    const xx = Object.assign([1, 2, 3], [4, 5]);
+    console.log(xx);
+}
+
+// 取值函数的处理 to add
+
 
 // Object.assign用途
 // 1.为对象添加属性 to add
@@ -108,15 +136,14 @@ console.log('target浅拷贝', target);
 function clone(origin){
     return Object.assign({}, origin)
 }
-console.log("clone({a:'clone'})", clone({ a: 'clone' }));
+console.log("clone", clone({ a: 'clone' }));
 
 // 4.合并多个对象
 var target = { a: 1, b: 2 };
 var source1 = { b: 3, c: 4 };
 var source2 = { c: 5 };
 const merge = (target, ...sources) => Object.assign(target, ...sources);
-merge(target, source1, source2);
-console.log('merge合并到某个对象', target);
+console.log('merge合并到某个对象', merge(target, source1, source2));
 
 const merge2 = (...sources) => Object.assign({}, ...sources);
 console.log('merge2返回一个新对象', merge2(source1, source2));
@@ -126,60 +153,94 @@ console.log('merge2返回一个新对象', merge2(source1, source2));
 const DEFAULTS = {
     logLevel: 0,
     outputFormat: 'html',
-    url: { // 属性值要是一个对象 DEFAULTS不会起作用 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    url: { // 属性值要是一个对象 DEFAULTS可能不会起作用  浅拷贝 整体替换
         host: 'xx',
         port: 7070
     },
 };
 
 function processContent(options){
-    options = Object.assign({}, DEFAULTS, options); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 深拷贝 to add
+    options = Object.assign({}, DEFAULTS, options);
     console.log(options)
 }
 processContent({ url: { port: 8080 } });
 
-// to add to add to add============================================
+
+// 6.to add
+// 7.to add
+// 8.to add
+// 9.to add
+// 10.to add
 
 
-// 10.对象的扩展运算符 ... 只能放在最后
+// 11.对象的扩展运算符  解构赋值 ... 只能放在最后，否则会报错
 // (1)
 const [a, ...b]=[1, 2, 3];
 console.log('数组的扩展运算符 解构赋值', a, b);
 
-let { x1, y1, ...z1 } = { x1: 11, y1: 22, a: 33, b: 44 };
-console.log('对象的扩展运算符 解构赋值', x1, y1, z1);
+{
+    let { x, y, ...z } = { x: 11, y: 22, a: 33, b: 44 };
+    console.log('对象的扩展运算符 解构赋值', x, y, z);
+}
 
-//let { x2, y2, ...z2 } = null;       // error
-//let { x3, y3, ...z3 } = undefined;  // error
+// 等号右边无法转换为对象，会报错
+{
+    //let { x, y, ...z } = null;
+    //let { x2, y2, ...z2 } = undefined;
+}
 
-let obj3 = { a: { b: 1 } };
-let { ...x4 } = obj3;
-console.log(x4);
-obj3.a.b = 999;
-console.log(x4.a.b);
+// 解构赋值的拷贝是浅拷贝 引用类型值拷贝的是 值的引用 ，而不是值的副本
+{
+    let obj = { a: { b: 1 } };
+    let { ...x } = obj;
+    console.log(x);
+    obj.a.b = 999;
+    console.log(x.a.b);
+}
 
-// (2)
-let z2 = { a: 3, b: 4 };
-let z3 = { c: 3, d: 4 };
-let n = { ...z2 };
-console.log(n, Object.assign({}, z2));
+// 解构赋值 不能复制继承原型对象的属性 to add
 
-let z2z3 = { ...z2, ...z3 };
-console.log(z2z3, Object.assign({}, z2, z3));
+// (2)拷贝对象
+{
+    let z = { a: 3, b: 4 };
+    let n = { ...z };
+    console.log(n, Object.assign({}, z));
 
-let xWithOverrides = { ...z2, x: 1, y: 2 };
-let xWithOverrides2 = { ...z2, ...{ x: 1, y: 2 } };
-let xWithOverrides3 = Object.assign({}, z2, { x: 1, y: 2 });
-let x2 = 1, y2 = 2, xWithOverrides4 = { ...z2, x2, y2 }; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-console.log(xWithOverrides, xWithOverrides2, xWithOverrides3, xWithOverrides4);
+    let z2z3 = { ...z, ...{ c: 'c' } };
+    console.log('合并2个对象', z2z3, Object.assign({}, z, { c: 'c' }));
+}
 
-let z4 = {};
-let xWithDefaults = { x: 1, y: 2, ...z4 };
-let xWithDefaults2 = Object.assign({}, { x: 1, y: 2 }, z4);
-console.log(xWithDefaults, xWithDefaults2);
+// 扩展运算符内部的同名属性会被覆盖掉
+{
+    let z = { a: 3, b: 4 };
+    let aWithOverrides = { ...z, x: 1, y: 2 };
+    let aWithOverrides2 = { ...z, ...{ x: 1, y: 2 } };
+    let aWithOverrides3 = Object.assign({}, z, { x: 1, y: 2 });
 
-let emptyObject = { ...null, ...undefined };
-console.log(emptyObject);
+    let x = 1, y = 2, aWithOverrides4 = { ...z, x, y };
+    console.log(aWithOverrides, aWithOverrides2, aWithOverrides3, aWithOverrides4);
+}
+
+// 设置新对象的默认属性
+{
+    let z = { a: 3, b: 4 };
+    let aWithOverrides = { x: 1, y: 2, ...z };
+    console.log(aWithOverrides);
+}
+
+// 拷贝对象原型的属性 to add
+
+// 空对象没有任何效果, null, undefined会被忽略
+{
+    let z = {};
+    let aWithDefaults = { x: 1, y: 2, ...z };
+    let aWithDefaults2 = Object.assign({}, { x: 1, y: 2 }, z);
+    console.log(aWithDefaults, aWithDefaults2);
+
+    let emptyObject = { ...null, ...undefined };
+    console.log(emptyObject);
+}
+
 
 // to add
 
