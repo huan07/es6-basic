@@ -2,38 +2,63 @@
  * Created by yangHuan on 17/9/18.
  */
 
-// 1. array，按照对应位置，对变量赋值。
-let [foo, [[bar], baz]] =[1, [[2], 3]];
-console.log(foo, bar, baz);
+// 1. array，按照对应位置，对变量赋值（用 , 分割，按位置赋值）。
+// 先赋值，如果赋值的是undefined, 再用它的默认值
+{
+    let [foo, [[bar], baz]] =[1, [[2], 3]];
+    console.log(foo, bar, baz);
 
-let [head, ...tail]=[1, 2, 3, 4];
-console.log(head, tail);
+    let [head, ...tail]=[1, 2, 3, 4];
+    console.log(head, tail);
 
-let [x, y, ...z]=['a'];
-console.log(x, '解构不成功，变量的值为：undefined', y, z);
+    // 解构不成功，变量的值为：undefined
+    let [x, y, ...z]=['a'];
+    console.log(x, y, z);
+}
+
+// 不完全解构
 
 //  等号右边的不是数组会报错（不是可遍历的结构）
-let [foo2]='a'; // 1,false,NaN,undefined,null,{},
+{
+    let [foo]='a'; // 1,false,NaN,undefined,null,{},
+}
 
 // to add examples
 
-// default value (when undefined strict)
-var [x1, y1 = 'b']=['a'];
-console.log('默认值生效的条件是：undefined', x1, y1);
-var [x1, y1 = 'b']=['a', undefined];
-console.log('默认值生效的条件是：undefined', x1, y1);
-var [x1, y1 = 'b']=['a', null];
-console.log('默认值生效的条件是：undefined', x1, y1);
+// 默认值 生效的条件是：undefined, ===比较
+{
+    var [x1, y1 = 'b']=['a'];
+    console.log(x1, y1);
 
-// 默认值是一个表达式 to add
+    var [x1, y1 = 'b']=['a', undefined];
+    console.log(x1, y1);
 
-var [x4 = 1, y4 = x4]=[];
-console.log(x4, y4);
-var [x4 = 1, y4 = x4]=[2];
-console.log(x4, y4);
-var [x4 = 1, y4 = x4]=[3, 4];
-console.log(x4, y4);
-//let [x5=y5,y5=1]=[]; console.log(x5,y5) // 怎么没有报错呢？？？？
+    var [x1, y1 = 'b']=['a', null];
+    console.log(x1, y1, 'y1没有取到默认值');
+}
+
+// 默认值是一个表达式 惰性求值 to add
+{
+
+}
+
+// 默认值可以引用解构赋值的其他变量，但该变量必须已经声明
+{
+    let [x = 1, y = x] = [];
+    console.log('y = x => ', x, y);
+}
+{
+    let [x = 1, y = x] = [2];
+    console.log('y = x => ', x, y);
+}
+{
+    let [x = 1, y = x] = [1, 2];
+    console.log('y = x => ', x, y);
+}
+{
+    let [x = y, y = 1] = []; // why not error
+    console.log('y = x => ', x, y);
+}
 
 
 // 2. object 按照key对value赋值，key和value同名，可以省略value,
@@ -68,16 +93,16 @@ console.log('// 3.', helloLen);
 //let{prop:yyy}=null; // error
 
 // 5.
-function add([x, y]) {
+function add([x, y]){
     return x + y;
 }
 console.log('// 5.', add([4, 5]));
 
-[[1, 2], [3, 4], [undefined, undefined]].map(([x = 2017, y = 2017]) => {
+[[1, 2], [3, 4], [undefined, undefined]].map(([x = 2017, y = 2017]) =>{
     console.log('// 5.', x + y)
 });
 
-function move({ x = 9, y = 9 }={}) { // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+function move({ x = 9, y = 9 }={}){ // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     console.log('// 5. 函数参数的解构使用默认值', x, y);
 }
 move({ x: 1, y: 2 });
@@ -86,7 +111,7 @@ move({ y: 2 });
 move({});
 move();
 
-function move2({ x, y }={ x: 8, y: 8 }) { // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+function move2({ x, y }={ x: 8, y: 8 }){ // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     console.log('// 5. 为函数参数指定默认值', x, y);
 }
 move2({ x: 1, y: 2 });
@@ -106,24 +131,24 @@ var yy = 200;
 console.log(xx, yy);
 
 //(2)
-function example() {
+function example(){
     return [11, 22, 33];
 }
 var [xx, yy, zz]=example();
 console.log(xx, yy, zz);
 
-function example2() {
+function example2(){
     return { foof: 'foof', barb: 'barb' };
 }
 var { foof, barb }=example2();
 console.log(foof, barb);
 
 //(3) 函数参数解构赋值
-function example3([x, y, z]) {
+function example3([x, y, z]){
     console.log(x, y, z);
 }
 example3([1, 2, 3]);
-function example4({ x, y, z }) {
+function example4({ x, y, z }){
     console.log(x, y, z);
 }
 example4({ x: 'x', y: 'y', z: 'z' });
