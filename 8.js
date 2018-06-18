@@ -162,3 +162,19 @@
 
 
 // 3.Array.of
+
+
+// 5.find,findIndex 参照js-basic
+// 都可以发现NaN, 弥补indexOf的不足
+{
+    let xx = [NaN].indexOf(NaN);
+
+    let yy = [NaN].find(x => Object.is(NaN, x));
+
+    let zz = [NaN].findIndex(x => Object.is(NaN, x));
+
+    console.log('find,findIndex => ', xx, yy, zz);
+}
+
+
+// 8.includes 返回true/false
