@@ -177,4 +177,48 @@
 }
 
 
+// 7.数组实例keys,values,entries
+{
+    const arr = ['a', 'b', 'c'];
+
+    for (let index of arr.keys()) {
+        console.log('index => ', index);
+    }
+
+    for (let item of arr.values()) {
+        console.log('item => ', item);
+    }
+
+    for (let [index, item] of arr.entries()) {
+        console.log(index, item);
+    }
+}
+
+
 // 8.includes 返回true/false
+{
+    var arr = [1, 2, 3, NaN];
+
+    var xx = arr.indexOf(NaN);
+
+    var yy = arr.includes(NaN);
+    console.log('includes => ', xx, yy);
+}
+{
+    const containsX = (arr, value) =>{ /* 性能差，每次调用都要去判断 */
+        if (Array.prototype.includes) {
+            return arr.includes(value);
+        } else {
+            return arr.some(el => el === value)
+        }
+    };
+    console.log(containsX(arr, 13));
+
+
+    const contains = (() => /* 匿名函数立即执行，闭包的实现方式 better */
+        Array.prototype.includes
+            ? (arr, value) => arr.includes(value)
+            : (arr, value) => arr.some(el => el === value))();
+    console.log(contains(arr, 13));
+}
+

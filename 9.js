@@ -5,23 +5,23 @@
 import React from 'react';
 import { render, } from 'react-dom';
 
-// 1
+// 1.属性的简洁表示法
 {
-    var foo = 'bar';
-    var baz = { foo };
+    const foo = 'bar';
+    const baz = { foo }; // 属性名为变量名，属性值为变量值
     console.log(baz);
 
-    var o = { // !!!!
+    const o = { // !!!!
         method(){
             return 'method简写; ';
         }
     };
-    var o_ = {
+    const o_ = {
         method: function(){
             return 'method _es2015; ';
         }
     };
-    var o__ = { // !!!!
+    const o__ = { // !!!!
         method: () =>{
             return 'method简写 _结合箭头函数; ';
         }
@@ -31,25 +31,33 @@ import { render, } from 'react-dom';
 
 // CommonJS 模块  to add
 
-// 2 字面量定义对象 属性名表达式赋值，取值
+// 2.属性名表达式   字面量定义对象 属性名表达式赋值，取值
+{
+    const obj = {};
+    obj.foo = 'foo';
+    obj['ba' + 'r'] = 'bar';
+    console.log('属性名表达式 => ', obj);
+}
+
 {
     let propKey = 'foo';
-    let obj = { // ES6 允许字面量定义对象时,用表达式作为对象的属性名，在 ES5 中不支持
+    let obj = {
         [propKey]: true,
-        ['a' + 'bc']: 123,
+        ['a' + 'bc']: 123, /* es6 可以这样用*/
         '_hc.v': '_hc.v',
         ['h' + 'ello'](){
             return 'hi';
         }
     };
     console.log('字面量定义对象 => ', obj, obj[propKey], obj['foo'], obj[`abc`], obj.hello());
+
+    // 属性名表达式与简洁表示法，不能同时使用，会报错
+    /*obj = {
+     [propKey]
+     }*/
 }
 
-// 属性名表达式与简洁表示法，不能同时使用，会报错
-/*obj={
- [propKey],
- }*/
-
+// js会隐式的将key转换为字符串类型 String(xx)
 {
     const keyA = { a: 1 };
     const keyB = { b: 2 };
@@ -57,23 +65,23 @@ import { render, } from 'react-dom';
         [keyA]: 'valueA',
         [keyB]: 'valueB'
     };
-    console.log('myObject', myObject);
+    console.log('myObject => ', myObject);
 }
 
 // 3  to add
 
-// 4
-console.log("Object.is('true','true')", Object.is('true', 'true'));
+// 4.Object.is 同值相等，和===基本一致，不同之处如下
+{
+    console.log(+0 === -0, NaN === NaN);
+    console.log('Object.is', Object.is(+0, -0), Object.is(NaN, NaN));
+}
+{
+    console.log(Object.is({}, {}), {} === {});
+}
+// ES5部署Object.is  to add
 
-console.log("Object.is({},{})", Object.is({}, {}));
 
-console.log("Object.is(-0,0)", Object.is(-0, 0), "  -0===0", -0 === 0);
-
-console.log("Object.is(NaN,NaN)", Object.is(NaN, NaN), "NaN===NaN", NaN === NaN);
-// ES5 可以通过下面的代码，部署Object.is   to add
-
-
-// 5 只拷贝源对象的自身属性，
+// 5.Object.assign 只拷贝源对象的自身属性，
 // 不拷贝继承属性，
 // 不拷贝不可枚举属性
 {
