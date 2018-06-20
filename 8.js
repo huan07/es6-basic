@@ -215,7 +215,7 @@
     console.log(containsX(arr, 13), containsX(arr, NaN));
 
 
-    const contains = (() => /* 匿名函数立即执行，闭包的实现方式 better */
+    const contains = (() => /* 匿名函数立即执行，闭包的实现方式，结果保留在内存中  better */
         Array.prototype.includes
             ? (arr, value) => arr.includes(value)
             : (arr, value) => arr.some(el => el === value))();
