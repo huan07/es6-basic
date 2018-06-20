@@ -212,13 +212,13 @@
             return arr.some(el => el === value)
         }
     };
-    console.log(containsX(arr, 13));
+    console.log(containsX(arr, 13), containsX(arr, NaN));
 
 
     const contains = (() => /* 匿名函数立即执行，闭包的实现方式 better */
         Array.prototype.includes
             ? (arr, value) => arr.includes(value)
             : (arr, value) => arr.some(el => el === value))();
-    console.log(contains(arr, 13));
+    console.log(contains(arr, 13), contains(arr, NaN));
 }
 

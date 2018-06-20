@@ -178,7 +178,30 @@ processContent({ url: { port: 8080 } });
 // 7.to add
 // 8.to add
 // 9.to add
-// 10.to add
+
+
+// 10.Object.keys，Object.values, Object.entries
+{
+    var obj = { foo: 'foo', bar: 'bar' };
+    var keys = Object.keys(obj);
+    console.log('Object.keys => ', keys);
+
+
+    let { keys, values, entries } = Object; // 解构出方法
+    let obj = { a: 1, b: 2, c: 3 };
+
+    for (let key of keys(obj)) {
+        console.log('key => ', key);
+    }
+
+    for (let value of values(obj)) {
+        console.log('value => ', value);
+    }
+
+    for (let [key, value] of entries(obj)) {
+        console.log(key, value);
+    }
+}
 
 
 // 11.对象的扩展运算符  解构赋值 ... 只能放在最后，否则会报错

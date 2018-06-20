@@ -3,7 +3,7 @@
  */
 
 module.exports = {
-    entry: ['babel-polyfill', './9.js'],
+    entry: ['babel-polyfill', './8.js'],
 
     output: {
         filename: 'bundle.js',
