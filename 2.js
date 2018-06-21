@@ -2,7 +2,7 @@
  * Created by yangHuan on 17/9/20.
  */
 
-// 1. let,const变量只在代码块内有效  {} 就是一个代码块
+// 1. let,const变量只在代码块内有效  {} 就是一个代码块 ！！
 {
     let a = 10;
     var b = 1;
@@ -48,7 +48,7 @@ console.log(b);
 {
     for (let i = 0; i < 3; i++) {
         let i = 'abc';
-        console.log('for循环，父子作用域 => ', i);
+        console.log('for循环，父子作用域 => ', i); // ??
     }
 }
 
@@ -74,7 +74,7 @@ console.log(b);
 }
 
 
-// let不存在变量提升；=> 先定义变量，再调用
+// let不存在变量提升；=> 先定义变量，再初始化 ！！
 console.log('foo => ', foo);
 var foo = 2;
 
@@ -146,7 +146,7 @@ let bar = 2;
     function f1(){
         let n = 5;
         if (true) {
-            let n = 10; // 转化后 内部代码块的n，外部代码块的n是用不同的变量区分开的
+            let n = 10; // 转化后 内部代码块的n，外部代码块的n是用不同的变量区分开的 ！！
             console.log('inner es6 => ', n);
         }
         console.log('outer es6 => ', n);
@@ -185,5 +185,6 @@ let bar = 2;
             let outer = 'inner';
             console.log('内层作用域可以定义外层作用域的同名变量outer => ', outer);
         }
+        console.log('outer => ', outer);
     }
 }
