@@ -8,9 +8,6 @@
     let [foo, [[bar], baz]] =[1, [[2], 3]]; // 可用于嵌套结构
     console.log(foo, bar, baz);
 
-    let [head, ...tail]=[1, 2, 3, 4];
-    console.log(head, tail);
-
     // 解构不成功，变量的值为：undefined
     let [x, y, ...z]=['a'];
     console.log(x, y, z);
@@ -25,7 +22,7 @@
 
 // to add examples
 
-// 默认值 生效的条件是：undefined, ===比较
+// 默认值 生效的条件是：undefined, === 比较
 {
     var [x1, y1 = 'b']=['a'];
     console.log(x1, y1);
@@ -34,7 +31,7 @@
     console.log(x1, y1);
 
     var [x1, y1 = 'b']=['a', null];
-    console.log(x1, y1, 'y1没有取到默认值');
+    console.log(x1, y1, 'y1没有取到默认值 =>');
 }
 
 // 默认值是一个表达式 惰性求值 to add
@@ -42,7 +39,7 @@
 
 }
 
-// 默认值可以引用解构赋值的其他变量，但该变量必须已经声明
+// 默认值可以引用解构赋值的其他变量，但该变量必须已经声明 ！！
 {
     let [x = 1, y = x] = [];
     console.log('y = x => ', x, y);
@@ -63,16 +60,15 @@
 
 // 2. object 按照左右侧对象的属性名，对左侧对象的变量名赋值，
 // 左侧对象的属性名、变量名一致，可以省略一个，
-// 解构失败，变量的值等于undefined
 {
     let { foo, bar, baz } = { bar: 'bbb', foo: 'aaa' };
-    console.log('object destructure => ', foo, bar, baz);
+    console.log('object destructure => ', foo, bar, baz); // 解构不成功，变量的值为：undefined
 }
 {
     // 属性名，变量名不一致，不可以省略
     let { foo, bar:baz } = { foo: 'aaa', bar: 'bbb' };
     console.log(foo, baz);
-    // console.log(bar); // error foo is not defined
+    // console.log(bar); // error bar is not defined, bar只是模式
 }
 {
     let { p:[x, { y }] } = { p: ['hello', { y: 'world' }] };
@@ -131,7 +127,7 @@
 }
 {
     function move({ x = 9, y = 9 } = {}){
-        console.log('// 5. 函数参数的解构使用默认值', x, y);
+        console.log('// 5. 函数参数的解构使用默认值', x, y); // ！！better
     }
 
     move({ x: 1, y: 2 });
@@ -141,7 +137,7 @@
     move();
 
     function move2({ x, y } = { x: 9, y: 9 }){
-        console.log('// 5. 为函数参数指定默认值', x, y);
+        console.log('// 5. 为函数参数指定默认值', x, y);// ！！
     }
 
     move2({ x: 1, y: 2 });
