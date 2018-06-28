@@ -331,3 +331,40 @@
 {
 
 }
+
+
+// 考题：箭头函数的this指向
+{
+    class Animal {
+        constructor(){
+            this.type = 'animal';
+        }
+
+        say(val){
+            setTimeout(function(){ // 超时调用，this指向全局作用域 Window（非严格模式下，否则是undefined） // bang
+                console.log(this);
+                console.log(this.type + ' says ' + val);
+            }, 1000)
+        }
+    }
+
+    var animal = new Animal();
+    animal.say('hi');
+}
+{
+    class Animal {
+        constructor(){
+            this.type = 'animal';
+        }
+
+        say(val){
+            setTimeout(() =>{
+                console.log(this);
+                console.log(this.type + ' says ' + val);
+            }, 1000);
+        }
+    }
+
+    var animal = new Animal();
+    animal.say('hello');
+}
