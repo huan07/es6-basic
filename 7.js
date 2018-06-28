@@ -2,9 +2,9 @@
  * Created by yanghuan on 17/9/4.
  */
 
-// 1. 没有赋值（或者显式undefined），才取默认值
+// 1.函数参数的默认值；没有赋值（或者显式undefined），才取默认值
 {
-    function log(x, y = 'World'){ // y 不能用let const 再次声明
+    function log(x, y = 'World'){ // 在函数体中，y不能用let const 再次声明
         console.log(x, y);
     }
 
@@ -48,31 +48,36 @@
 
     foo({});
     foo({ x: 1 });
-    foo({ x: 1, y: 10 });
+    foo({ x: 1, y: 2 });
     // foo(); // error
 }
 {
     function foo({ x, y = 5 }={}){ // 函数参数的默认值是 {} , 不传参数调用，就不会报错了
-        console.log(x, y);
+        console.log('提供函数参数的默认值 => ', x, y);
     }
 
+    foo({});
+    foo({ x: 1 });
+    foo({ x: 1, y: 2 });
     foo();
 }
 
 // 函数参数的默认值是空对象，不是空对象的差别 to add
 
-// 参数默认值的位置 不是尾参数，调用时必须 显式传入参数undefined
+// 参数默认值的位置
 {
     function f(x = 1, y){
-        console.log('参数默认值的位置 不是尾参数 => ', x, y);
+        console.log('参数默认值的位置 => ', x, y);
     }
 
     f();
     f(2);
-    // f(,2); // error
-    f(undefined, 2);
+    // f(,1); // error
+    f(undefined, 2); // 不是尾参数，调用时必须 显式传入参数undefined
     f(3, 4);
 }
+
+// 函数的 length 属性  to add
 
 // 作用域 to add
 {
@@ -85,16 +90,32 @@
     f(2);
 }
 {
-    var x = 1;
+    let x = 1;
 
-    function f(x, y){
+    function f(y = x){
+        let x = 2;
         console.log('作用域 => 2', y);
     }
 
-    f(2);
+    f();
 }
 
-// rest参数
+// 指定某个参数不得省略
+{
+    function throwIfMissing(){
+        throw new Error('Missing parameter');
+    }
+
+    function foo(mustBeProvided = throwIfMissing()){
+        return mustBeProvided;
+    }
+
+    //foo();
+    foo(99);
+}
+
+
+// 2.rest参数（只能是最后一个参数，否则会报错）
 {
     function add(...values){
         let sum = 0;
@@ -124,6 +145,10 @@
 }
 
 
+// 3. to add
+// 4. to add
+
+
 // 5. ＝>
 {
     var f = v => v;
@@ -143,13 +168,13 @@
 
     //
     var f3 = (v1, v2) => v1 + v2;
-    var f31 = (v1, v2) =>{
+    var f32 = (v1, v2) =>{
         return v1 + v2;
-    }
+    };
     var f3_ = function(v1, v2){
         return v1 + v2;
     };
-    console.log('f3', f3(1, 2), f31(1, 2), f3_(1, 2));
+    console.log('f3', f3(1, 2), f32(1, 2), f3_(1, 2));
 
 
     //
@@ -180,14 +205,14 @@
 
 // 与变量解构结合
 {
-    const full = ({ first, second }) => `${first}-${second}`;
+    const full = ({ first, last }) => `${first}-${last}`;
     const full_ = function(options){
-        return options.first + '-' + options.second;
+        return options.first + '-' + options.last;
     };
-    console.log(full({ first: 'firstName', second: 'secondName' }));
+    console.log(full({ first: 'firstName', last: 'secondName' }));
     console.log(full_({
             first: 'firstName',
-            second: 'secondName'
+            last: 'secondName'
         })
     );
 }
@@ -207,10 +232,12 @@
     console.log('与rest参数结合 => ', numbers(11, 12, 13));
 
     const headAndTail = (head, ...tail) => [head, tail];
-    console.log('与rest参数结合 => ', headAndTail(11, 18, 19));
+    console.log('与rest参数结合 => ', headAndTail(11, 12, 13));
 }
 
-// this的指向 是固定的，定义时所在的对象
+// this的指向 在箭头函数中是固定的，this=>定义时所在的对象 ，而不是使用时所在的对象（与普通函数相反）！！
+// 实际原因：箭头函数根本没有自己的this，导致内部的this就是 最外层代码块的this ！！
+// 没有自己的this, 所以不能够通过call, apply, bind去改变this的指向
 {
     function foo(){
         setTimeout(() =>{
@@ -219,11 +246,67 @@
     }
 
     var id = 21;
+    // foo(); // error this指向了undefined
     foo.call({ id: 38 });
-
     foo.apply({ id: 99 });
 }
 
+// example
+{
+    function Timer(){
+        this.s1 = 0;
+        this.s2 = 0;
+
+        setInterval(() => this.s1++, 1000); // 指向的是定义时对象 => Timer实例
+
+        setInterval(function(){
+            this.s2++; // 指向的是运行时对象 => window对象
+        }, 1000);
+    }
+
+    var timer = new Timer();
+
+    setTimeout(() => console.log('s1 => ', timer.s1), 3100);
+    setTimeout(() => console.log('s2 => ', timer.s2), 3100);
+}
+
+// example2
+{
+    function foo(){
+        return () =>{
+            return () =>{
+                return () =>{
+                    console.log('嵌套的箭头函数this的指向，id: ', this.id);
+                };
+            };
+        };
+    }
+
+    var f = foo.call({ id: 1 });
+    console.log('f ', f);
+
+    var t1 = f.call({ id: 2 })()();
+    console.log('t1 ', f());
+
+    var t2 = f().call({ id: 3 })();
+    console.log('t2 ', f()());
+
+    var t3 = f()().call({ id: 4 });
+    console.log('t3 ', f()()());
+}
+
+// 箭头函数还没有自己的arguments、super、new.target; 指向最外层的函数的参数
+{
+    function foo(){
+        setTimeout(() =>{
+            console.log('arguments => ', arguments);
+        }, 1000);
+    }
+
+    foo(98, 99);
+}
+
+// 嵌套的箭头函数 to add
 
 {
     var foo = {
