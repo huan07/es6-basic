@@ -246,7 +246,7 @@
     }
 
     var id = 21;
-    // foo(); // error this指向了undefined
+    // foo(); // error
     foo.call({ id: 38 });
     foo.apply({ id: 99 });
 }
@@ -285,13 +285,13 @@
     var f = foo.call({ id: 1 });
     console.log('f ', f);
 
-    var t1 = f.call({ id: 2 })()();
+    var t1 = f.call({ id: 2 })()(); // 无法改变this
     console.log('t1 ', f());
 
-    var t2 = f().call({ id: 3 })();
+    var t2 = f().call({ id: 3 })(); // 无法改变this
     console.log('t2 ', f()());
 
-    var t3 = f()().call({ id: 4 });
+    var t3 = f()().call({ id: 4 }); // 无法改变this
     console.log('t3 ', f()()());
 }
 
