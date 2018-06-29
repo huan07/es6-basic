@@ -213,6 +213,7 @@ let getJSON = null;
     });
 }
 
+// 考点
 {
     const promise = new Promise((resolve, reject) =>{
         resolve('xx 999'); // Promise状态已经变成resolved（永久保持该状态，不会再变了），再抛出错误是无效的
