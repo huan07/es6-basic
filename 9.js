@@ -73,32 +73,35 @@ import { render, } from 'react-dom';
 // 4.Object.is 同值相等，和===基本一致，不同之处如下
 {
     console.log(+0 === -0, NaN === NaN);
-    console.log('Object.is', Object.is(+0, -0), Object.is(NaN, NaN));
+    console.log('Object.is => ', Object.is(+0, -0), Object.is(NaN, NaN));
 }
 {
     console.log(Object.is({}, {}), {} === {});
+
+    const obj = {};
+    const obj2 = obj;
+    console.log('引用类型值比较的是引用地址 => ', Object.is(obj, obj2));
 }
 // ES5部署Object.is  to add
 
 
 // 5.Object.assign 只拷贝源对象的自身属性，
-// 不拷贝继承属性，
-// 不拷贝不可枚举属性
+// 不拷贝继承、不可枚举属性，
 {
     const target = { a: 1, b: 1 };
 
     const source1 = { b: 2, c: 2 };
     const source2 = { c: 3 };
 
-    const xx = Object.assign(target, source1, source2); // 拷贝到目标对象，返回的是目标对象的值！！！！
-    console.log('返回的是目标对象！！！！', xx);
-    console.log('target => ', target);
+    const xx = Object.assign(target, source1, source2); // 拷贝到目标对象，返回的是目标对象的值！！
+    console.log('返回的是目标对象！！', xx);
+    console.log('target => ', target, xx === target);
 }
 
 // 只有一个参数，直接返回这个参数
 {
     const obj = { a: 1 };
-    console.log('Object.assign(obj)===obj', Object.assign(obj) === obj);
+    console.log('Object.assign(obj) === obj', Object.assign(obj) === obj);
 
     console.log('参数不是对象，会被转换为对象', Object.assign(2));
 
@@ -140,11 +143,23 @@ import { render, } from 'react-dom';
 // Object.assign用途
 // 1.为对象添加属性 to add
 // 2.         方法 to add
-// 3.克隆对象   要克隆它的继承值 to add
-function clone(origin){
-    return Object.assign({}, origin)
+// 3.克隆对象
+{
+    function clone(origin){ // 克隆对象自身的值
+        return Object.assign({}, origin)
+    }
+
+    console.log("clone => ", clone({ a: 'clone' }));
 }
-console.log("clone", clone({ a: 'clone' }));
+
+{
+    function clone(origin){ // 克隆对象自身值 + 继承值
+        const extendsProp = Object.getPrototypeOf(origin);
+        return Object.assign(Object.create(extendsProp), origin);
+    }
+
+    console.log("clone => ", clone({ a: 'clone' })); // to add example
+}
 
 // 4.合并多个对象
 var target = { a: 1, b: 2 };
@@ -168,15 +183,32 @@ const DEFAULTS = {
 };
 
 function processContent(options){
+    console.log(options);
     options = Object.assign({}, DEFAULTS, options);
-    console.log(options)
+    console.log(options);
 }
 processContent({ url: { port: 8080 } });
 
 
 // 6.to add
+
 // 7.to add
-// 8.to add
+
+
+// 8.Object.setPrototypeOf
+// Object.getPrototypeOf
+{
+    const o = Object.setPrototypeOf({}, null);
+    console.log('o => ', o);
+}
+{
+    let proto = {};
+    let obj = { x: 10 };
+    const o = Object.setPrototypeOf(obj, proto);
+    console.log('o => ', o);
+}
+
+
 // 9.to add
 
 
