@@ -236,39 +236,22 @@ processContent({ url: { port: 8080 } });
 }
 
 
-// 11.对象的扩展运算符  解构赋值 ... 只能放在最后，否则会报错
-// (1)
-const [a, ...b]=[1, 2, 3];
-console.log('数组的扩展运算符 解构赋值', a, b);
+// 11.对象的扩展运算符
 
-{
-    let { x, y, ...z } = { x: 11, y: 22, a: 33, b: 44 };
-    console.log('对象的扩展运算符 解构赋值', x, y, z);
-}
-
-// 等号右边无法转换为对象，会报错
-{
-    //let { x, y, ...z } = null;
-    //let { x2, y2, ...z2 } = undefined;
-}
-
-// 解构赋值的拷贝是浅拷贝 引用类型值拷贝的是 值的引用 ，而不是值的副本
-{
-    let obj = { a: { b: 1 } };
-    let { ...x } = obj;
-    console.log(x);
-    obj.a.b = 999;
-    console.log(x.a.b);
-}
-
-// 解构赋值 不能复制继承原型对象的属性 to add
-
-// (2)拷贝对象
+// (2)拷贝对象：实例属性
 {
     let z = { a: 3, b: 4 };
     let n = { ...z };
     console.log(n, Object.assign({}, z));
 
+    // 拷贝实例＋原型属性 to add
+    {
+
+    }
+}
+
+{
+    let z = { a: 3, b: 4 };
     let z2z3 = { ...z, ...{ c: 'c' } };
     console.log('合并2个对象', z2z3, Object.assign({}, z, { c: 'c' }));
 }
@@ -290,8 +273,6 @@ console.log('数组的扩展运算符 解构赋值', a, b);
     let aWithOverrides = { x: 1, y: 2, ...z };
     console.log(aWithOverrides);
 }
-
-// 拷贝对象原型的属性 to add
 
 // 空对象没有任何效果, null, undefined会被忽略
 {
