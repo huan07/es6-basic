@@ -82,33 +82,35 @@
 
 // 5. Class 表达式
 {
-    const MyClassX = class Me { // Me只在 Class 的内部代码可用，指代当前类 在外部用会报错
+    const MyClass = class Me { // Me只在 Class 的内部代码可用，指代当前类 在外部用会报错
         getClassName(){
             return Me.name;
         }
     };
 
-    let inst = new MyClassX();
+    let inst = new MyClass();
     console.log(inst.getClassName());
-
-    const MyClassX2 = class {
+}
+{
+    const MyClassX = class {
         xx(){
-            console.log(' 内部没有用到，可以省略 ');
+            console.log('内部没有用到，可以省略');
         }
     };
-    new MyClassX2().xx();
-
+    new MyClassX().xx();
+}
+{
     // 立即执行的Class
-    const myClass3 = new class {
+    const person = new class {
         constructor(name){
             this.name = name;
         }
 
         sayName(){
-            console.log(this.name + '-' + this.name);
+            console.log('立即执行的Class => ', this.name);
         }
     }('ycg');
-    myClass3.sayName();
+    person.sayName();
 }
 
 
