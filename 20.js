@@ -2,8 +2,7 @@
  * Created by yangHuan on 17/11/13.
  */
 
-// 子类没有自己的this对象，而是继承父类的this对象
-// 如果不在constructor方法 调用super方法，子类就得不到this对象 新建实例会报错
+// 1.
 {
     class Point {
         constructor(x, y){
@@ -12,7 +11,7 @@
         }
 
         toString(){
-            console.log(this.x + ' super class ' + this.y);
+            return this.x + ' super class ' + this.y;
         }
 
         // 父类的静态方法，也会被子类继承
@@ -21,11 +20,11 @@
     class ColorPoint extends Point {
         constructor(x, y, color){
             super(x, y); // 1.调用父类的 constructor(x, y） ！！必须的
-            this.color = color; // 只有调用super之后，才可以使用this关键字
+            this.color = color; // 只有调用super之后，子类才有this对象，才可以添加子类的属性
         }
 
         toString(){
-            return this.color + '' + super.toString(); //  调用父类的 toString(x, y）
+            return super.toString() + ' , ' + this.color; //  调用父类的 toString(x, y）
         }
     }
 
@@ -35,8 +34,8 @@
         }
     }
 
-    console.log(Object.getPrototypeOf(ColorPoint)); // 从子类上获取父类
-    console.log(Object.getPrototypeOf(ColorPoint2));
+    console.log(Object.getPrototypeOf(ColorPoint) === Point); // 从子类上获取父类
+    console.log(Object.getPrototypeOf(ColorPoint2) === Point, Point);
 }
 
 

@@ -19,14 +19,13 @@
 {
     class Point {
         // 可以看作构造函数的另一种写法
-        // 类的所有方法都是定义在类的prototype属性上
         // 类方法是不可枚举的（ es5的原型方法是枚举的 ）！！
         constructor(x, y){
             this.x = x;
             this.y = y;
         }
 
-        toString(){
+        toString(){ // 类的所有方法都是定义在类的prototype属性上
             console.log(this.x + ' -Point- ' + this.y);
         }
     }
@@ -39,7 +38,7 @@
         constructor(x, y){
             // 类的默认方法；如果没有显示定义，JavaScript引擎会添加空的constructor方法
             // 通过 new 命令生成实例对象，自动调用该方法，返回实例对象
-            this.x = x; // this => 实例对象 ！！
+            this.x = x; // this => 实例对象 ！！！！
             this.y = y;
         }
 
@@ -172,6 +171,7 @@
 
 // 私有属性不支持  提案：为 class 加了私有属性， ＃  to add
 
+
 // 8.this的指向 （默认指向类的实例）
 // 单独使用方法（比如，解构出来方法），可能会报错
 {
@@ -210,7 +210,8 @@
     var logger = new Logger2();
     var { printName } = logger;
     printName(`Logger2 here`);
-
+}
+{
     // 解决方法2:
     class Logger3 {
         printName = (name = 'there') =>{ //
@@ -228,76 +229,122 @@
     // 解决方法3: Proxy to add
 }
 
+// 10.
+{
+    class MyClass {
 
-// 13.static 方法 (,this指的是类 )
-class Foo2 {
-    static classMethod(){
-        console.log('hello');
+        get prop(){
+            return 'getter';
+        }
 
-        this.baz();
+        set prop(value){
+            console.log(`setter: ${value}`)
+        }
     }
 
-    static baz(){
-        console.log('类的静态方法，不会被实例继承，直接通过 类 调用')
+    let inst = new MyClass();
+
+    inst.prop = 123;
+
+    console.log(inst.prop);
+}
+// to add example
+
+
+// 12.static方法 (方法如果有this，指的是类)
+// static方法不会被实例继承，直接被类调用
+// 可以被子类继承
+// 可以从super对象上调用的
+{
+    class Foo {
+        static classMethod(){
+            console.log('static方法不会被实例继承，直接被类调用');
+        }
     }
 
-    baz(){
-        console.log('会被 实例继承的 方法')
+    Foo.classMethod();
+
+    var foo = new Foo();
+    // foo.classMethod(); // error
+}
+{
+    class Foo {
+        static bar(){
+            this.baz();
+        }
+
+        static baz(){
+            console.log('静态方法的this => 类，而不是实例对象');
+        }
+
+        baz(){
+            console.log('原型对象方法，被实例共享的方法');
+        }
     }
+
+    Foo.bar();
+
+    Foo.baz();
 }
-
-Foo2.classMethod();
-
-
-class Foo3 {
-    static classMethod(){
-        console.log('static方法 可以被子类继承');
+{
+    class Foo {
+        static classMethod(){
+            console.log('static方法 可以被子类继承');
+        }
     }
-}
-class Bar extends Foo3 {
-}
-Bar.classMethod();
 
-
-class Foo4 {
-    static classMethod(){
-        console.log('static方法 可以被子类从super对象上调用');
+    class Bar extends Foo {
     }
+
+    Bar.classMethod();
 }
-class Bar4 extends Foo4 {
-    static classMethod(){
-        super.classMethod();
+{
+    class Foo {
+        static classMethod(){
+            return 'static方法 可以被子类从super对象上调用';
+        }
     }
-}
-Bar4.classMethod();
 
-// 14.static属性、实例属性
-class Foo5 {
-}
-Foo5.prop = 11; // 老的写法
-console.log(Foo5, Foo5.prop)
-
-// 静态属性提案
-// 新的写法
-// 类的实例属性、静态属性
-class MyClass {
-    myProp = 42;
-
-    constructor(){
-        console.log(this.myProp);
+    class Bar extends Foo {
+        static classMethod(){
+            return super.classMethod() + ', too';
+        }
     }
+
+    console.log(Foo.classMethod(), Bar.classMethod());
 }
-new MyClass();
 
-class MyClass2 {
-    static myProp = 44;
 
-    constructor(){
-        console.log(MyClass2.myProp);
+// 13.static属性、实例属性
+{
+    class Foo {
     }
+    Foo.prop = 11; // 老的写法
+    console.log(Foo, Foo.prop);
 }
-new MyClass2();
+{
+    class MyClass {
+        static myStaticProp = 44; // 类的静态属性
 
+        constructor(){
+            console.log(MyClass.myStaticProp);
+        }
+    }
+    new MyClass();
+}
+{
+    class MyClass {
+        myProp = 42; // 类的实例属性  新的写法，老写法放在constructor内；
+
+        constructor(){
+            console.log(this.myProp);
+        }
+    }
+    new MyClass();
+}
+
+
+// to add
 // 15. new.target 用在构造函数，返回new的构造函数名，如果不是用new调用的，返回undefined
 // 用在Class 返回当前的Class；被子类继承返回子类名
 // 可以被用在，不能独立使用，必须继承才能使用的类
