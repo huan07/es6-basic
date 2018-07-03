@@ -4,19 +4,20 @@
 
 // 1.
 {
-    function PointTest(x, y){
+    function Point(x, y){
         this.x = x;
         this.y = y;
     }
 
-    PointTest.prototype.toString = function(){
-        console.log(this.x + ' -PointTest- ' + this.y);
+    Point.prototype.toString = function(){
+        console.log(this.x + ' -Point- ' + this.y);
     };
-    var p = new PointTest(1, 2);
+
+    var p = new Point(1, 2);
     p.toString();
 }
 {
-    class PointTest2 {
+    class Point {
         // 可以看作构造函数的另一种写法
         // 类的所有方法都是定义在类的prototype属性上
         // 类方法是不可枚举的（ es5的原型方法是枚举的 ）！！
@@ -26,19 +27,18 @@
         }
 
         toString(){
-            console.log(this.x + ' -PointTest2- ' + this.y);
+            console.log(this.x + ' -Point- ' + this.y);
         }
     }
-    new PointTest2(11, 22).toString();
-    console.log(typeof PointTest2, PointTest2 === PointTest2.prototype.constructor);
+    new Point(11, 22).toString();
+    console.log(typeof Point, Point === Point.prototype.constructor);
 }
 {
     const methodName = 'getSum';
     class Point {
         constructor(x, y){
-            // 类的默认方法
-            // 如果没有显示定义，JavaScript引擎会添加空的constructor方法
-            // 通过 new 命令生成实例对象，自动调用该方法   返回实例对象
+            // 类的默认方法；如果没有显示定义，JavaScript引擎会添加空的constructor方法
+            // 通过 new 命令生成实例对象，自动调用该方法，返回实例对象
             this.x = x; // this => 实例对象 ！！
             this.y = y;
         }
@@ -49,7 +49,7 @@
 
         // 类的属性名可以采用表达式
         [methodName](){
-            return this.x * this.y;
+            return this.x + this.y;
         }
     }
     var point = new Point(3, 4);
@@ -57,7 +57,7 @@
 }
 
 
-// 2.类和模块的内部，默认就是严格模式
+// 2.类和模块的内部，默认就是use strict
 
 
 // 3.
@@ -68,44 +68,15 @@
         }
     }
     console.log(new Foo() instanceof Foo);
-    // console.log(Foo()); // 必须用new调用，否则error  ( es5可以不用new )
+    // console.log(Foo()); // 必须用new调用，否则error  ( es5可以不用new ！！)
 }
-
 
 // 4.类的实例对象
 // 实例的属性除非显式定义在其本身（定义在this对象）；否则都定义在原型上（class上）
 // 类的所有实例共享一个原型对象
 // Object.getPrototypeOf 方法来获取实例对象的原型，可以为原型添加属性／方法
 {
-    class Point {
-        constructor(x, y){
-            this.x = x;
-            this.y = y;
-        }
-
-        toString(){
-            console.log(this.x + ' 4.类的实例对象 ' + this.y);
-        }
-    }
-    var point = new Point(22, 33);
-    point.toString();
-    console.log(point.hasOwnProperty('x'));
-    console.log(point.hasOwnProperty('y'));
-    console.log(point.hasOwnProperty('toString'), ' toString不是定义在this上不算实例属性 ');
-    console.log(point.__proto__.hasOwnProperty('toString'));
-
-    var point2 = new Point(22, 33);
-    var point3 = new Point(222, 333);
-    console.log(point2.__proto__ === point3.__proto__);
-
-
-    point2.__proto__.printHello = function(){  // 不推荐使用，会影响到所有实例！！
-        console.log('Hello', this.x + this.y);
-    };
-    point2.printHello();
-    point3.printHello();
-    var point4 = new Point(2222, 3333);
-    point4.printHello();
+    ;
 }
 
 
