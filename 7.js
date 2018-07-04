@@ -2,7 +2,7 @@
  * Created by yanghuan on 17/9/4.
  */
 
-// 1.函数参数的默认值；没有赋值（或者显式undefined），才取默认值
+// 1.函数参数的默认值；没有赋值（显式undefined），默认值才生效
 {
     function log(x, y = 'World'){ // 在函数体中，y不能用let const 再次声明
         console.log(x, y);
@@ -29,7 +29,7 @@
     let x = 99;
 
     function foo2(p = x + 1){ // 每次调用，重新计算p
-        console.log(p);
+        console.log('参数默认值是惰性求值的 => ', p);
     }
 
     foo2(); // 100
@@ -37,7 +37,7 @@
 
     x = 105;
     foo2(); // 106
-    foo2(); // 106
+    foo2(105); // 106
 }
 
 // 与解构赋值默认值结合
@@ -62,9 +62,7 @@
     foo();
 }
 
-// 函数参数的默认值是空对象，不是空对象的差别 to add
-
-// 参数默认值的位置
+// 参数默认值的位置 ！！
 {
     function f(x = 1, y){
         console.log('参数默认值的位置 => ', x, y);
@@ -78,6 +76,7 @@
 }
 
 // 函数的 length 属性  to add
+// 指定默认值的前面参数的个数
 
 // 作用域 to add
 {
@@ -87,17 +86,17 @@
         console.log('作用域 => ', y);
     }
 
-    f(2);
+    f(0);
 }
 {
     let x = 1;
 
     function f(y = x){
         let x = 2;
-        console.log('作用域 => 2', y);
+        console.log('作用域 example2 => ', y);
     }
 
-    f();
+    f(100);
 }
 
 // 指定某个参数不得省略
@@ -149,7 +148,7 @@
 // 4. to add
 
 
-// 5. ＝>
+// 5. =>
 {
     var f = v => v;
     var f_ = function(v){
