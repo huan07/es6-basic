@@ -234,19 +234,21 @@
     console.log('与rest参数结合 => ', headAndTail(11, 12, 13));
 }
 
-// this的指向 在箭头函数中是固定的，this=>定义时所在的对象 ，而不是使用时所在的对象（与普通函数相反）！！
-// 实际原因：箭头函数根本没有自己的this，导致内部的this就是 最外层代码块的this ！！
+// this => 定义时所在的对象，而不是使用时所在的对象（与普通函数相反）！！
+// this的指向 在箭头函数中是 固定的 ，
+// 实际原因：箭头函数根本没有自己的this，内部的this就是 最外层代码块的this ！！
 // 没有自己的this, 所以不能够通过call, apply, bind去改变this的指向
+
 {
     function foo(){
         setTimeout(() =>{
-            console.log('id:', this.id);
+            console.log('this的指向 => ', this.id);
         }, 100)
     }
 
     var id = 21;
     // foo(); // error
-    foo.call({ id: 38 });
+    foo.call({ id: 38 }); // to see 
     foo.apply({ id: 99 });
 }
 
@@ -275,7 +277,7 @@
         return () =>{
             return () =>{
                 return () =>{
-                    console.log('嵌套的箭头函数this的指向，id: ', this.id);
+                    console.log('嵌套的箭头函数this的 => 最外层对象', this.id);
                 };
             };
         };
@@ -307,6 +309,8 @@
 
 // 嵌套的箭头函数 to add
 
+
+// :: 取代call, apply, bind
 {
     var foo = {
         color: 'red',
@@ -316,20 +320,35 @@
         return this.color;
     }
 
-    var xx = foo::sayColor;
+    var fooSayColor = sayColor.bind(foo);
+    var fooSayColor2 = foo::sayColor;
+    console.log(fooSayColor(), fooSayColor2());
 
-    var xx2 = sayColor.bind(foo);
+    console.log(sayColor.apply(foo), sayColor.call(foo), foo::sayColor());
 
 
-    console.log(xx(), xx2());
+    //
+    const hasOwnProperty = Object.prototype.hasOwnProperty;
 
-    console.log(foo::sayColor(), sayColor.apply(foo), sayColor.call(foo));
+    function hasOwn(obj, key){
+        return obj::hasOwnProperty(key);
+    }
+
+    console.log(hasOwn(foo, 'color'));
 }
 
-// ::
 {
+    const log = ::console.log;
 
+    const log2 = console.log.bind(console);
+
+    log(':: 对象的方法写法一');
+
+    log2(':: 对象的方法写法二');
 }
+
+
+// 8. to add
 
 
 // 考题：箭头函数的this指向
