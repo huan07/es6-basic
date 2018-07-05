@@ -40,86 +40,86 @@
 
 
 // 3. super
-// 作为函数调用时，代表父类的构造函数；
-// super()只能用在子类的构造函数之中，用在其他地方就会报错；
-
-
-// super调用父类的方法时，方法内部的this指向子类 ！！！！
+// a.作为函数调用时，代表父类的构造函数；
 {
     class A {
         constructor(){
-            console.log(new.target.name); // new.target指向当前正在执行的函数
+            console.log('作为函数调用时 => ', this); // new.target指向当前正在执行的函数
         }
     }
     class B extends A {
         constructor(){
             super(); // A.prototype.constructor.call(this)
+            // this => 子类
         }
     }
-    // console.log(new A(),new B()); why error
+    new A();
+    new B();
 }
 
-// super作为对象时，在普通方法中，指向父类的原型对象！！
+// b.super作为对象时，
+// 在普通方法中，指向父类的原型对象；父类方法被子类调用，this => 子类实例
 // 在静态方法中，指向父类
 {
-    class A2 {
+    class A {
         p(){
             return 2;
         }
     }
-    class B2 extends A2 {
+    class B extends A {
         constructor(){
             super();
-            console.log(super.p(), '在普通方法中，指向父类的原型对象');
+            console.log('在普通方法中 => ', super.p()); // super => 父类的原型
         }
     }
-    new B2();
+    new B();
 }
 
-// 拿不到父类的实例属性！！
+// 拿不到父类的实例属性，可以拿到原型属性
 {
-    class A3 {
+    class A {
         constructor(){
-            this.p = 3; // 实例属性
+            this.p = 3;
         }
     }
-    class B3 extends A3 {
+    class B extends A {
         get m(){
             return super.p;
         }
     }
-    let b = new B3();
-    console.log(b, b.p); // 并不是 undefined ？？？why
+    let b = new B();
+    console.log(b, b.m);
 }
 
 {
-    class A4 {
+    class A {
     }
-    A4.prototype.xx = 'xx';
-    class B4 extends A4 {
+    A.prototype.xx = 'xx';
+
+    class B extends A {
         constructor(){
             super();
-            console.log(super.xx, '属性定义在父类的原型对象上，可以取到值');
+            console.log('属性定义在父类的原型对象上，可以取到值 => ', super.xx);
         }
     }
-    new B4();
+    new B();
 }
 
-// this指向子类
 {
-    class A5 {
+    class A {
         constructor(){
-            this.x = 11;
+            this.x = 'A';
         }
 
         print(){
             console.log(this.x);
         }
     }
-    class B5 extends A5 {
+
+    class B extends A {
         constructor(){
             super();
-            this.x = 22;
+            this.x = 'B';
         }
 
         m(){
@@ -127,36 +127,86 @@
             // => super.print.call(this)
         }
     }
-    var a5 = new A5();
-    var b5 = new B5();
-    a5.print();
-    b5.m();
+    var a = new A();
+    var b = new B();
+    a.print();
+    b.m();
 }
 
 // 通过super对某个属性赋值，这时super就是this，改变的是子类的实例属性
 {
-    class A6 {
+    class A {
         constructor(){
-            this.x = 111;
+            this.x = 91;
         }
     }
-    class B6 extends A6 {
+    class B extends A {
         constructor(){
             super();
-            this.x = 222; // this => 子类实例
-            super.x = 333; // 赋值的属性会变成子类实例的属性
+            this.x = 92; // this => 子类实例
+            super.x = 93; // 赋值的属性会变成子类实例的属性
             console.log(super.x); // ?? undefined
+            console.log(this.x); // ?? 为啥不是93
+        }
+    }
+    new B();
+}
+
+{
+    class Parent {
+        static myMethod(msg){
+            console.log('static => ', msg);
+        }
+
+        myMethod(msg){
+            console.log('instance => ', msg)
+        }
+    }
+
+    class Child extends Parent {
+        static myMethod(msg){
+            super.myMethod(msg); // super => 父类
+        }
+
+        myMethod(msg){
+            super.myMethod(msg); // super => 父类原型
+        }
+    }
+
+    Child.myMethod(1);
+
+    new Child().myMethod(2);
+}
+
+{
+    class A {
+        constructor(){
+            this.x = 1;
+        }
+
+        static print(){
             console.log(this.x);
         }
     }
-    new B6();
+
+    class B extends A {
+        constructor(){
+            super();
+            this.x = 2;
+        }
+
+        static m(){
+            super.print();
+        }
+    }
+
+    B.x = 3;
+    B.m();
 }
 
-// super作为对象 用在静态方法之中，这时super将指向父类，而不是父类的原型对象。
-// to add
 
-
-// 4. prototype __proto__  存在2条继承链
+// 4.__proto__
+// prototype 存在2条继承链
 {
     class A {
 
@@ -166,8 +216,90 @@
 
     }
 
-    console.log(B.__proto__ === A); // 构造函数的继承，指向父类
-    console.log(B.prototype.__proto__ === A.prototype); // 方法的继承
+    console.log('构造函数的继承 => ', B.__proto__ === A); // => 父类
+    console.log('方法的继承 => ', B.prototype.__proto__ === A.prototype); // => 父类原型
 }
 
 // 类的继承 实现模式
+{
+    class A {
+
+    }
+
+    class B {
+
+    }
+
+    Object.setPrototypeOf(B, A);
+    Object.setPrototypeOf(B.prototype, A.prototype);
+}
+
+// to add other
+
+
+// 5. 无法继承原生构造函数
+{
+    function MyArray(){
+        Array.apply(this, arguments);
+    }
+
+    MyArray.prototype = Object.create(Array.prototype, {
+        constructor: {
+            value: MyArray,
+
+        }
+    });
+
+    var colors = new MyArray();
+    colors[0] = 'red';
+    console.log(colors, colors.length);
+
+    var colors2 = new Array();
+    colors2[2] = 'red';
+    console.log(colors2, colors2.length);
+}
+
+// ES6 允许继承原生构造函数定义子类
+{
+    class MyArray extends Array {
+        constructor(...args){
+            super(...args);
+        }
+    }
+
+    var colors = new MyArray();
+    colors[0] = 'red';
+    console.log(colors, colors.length);
+
+    var colors2 = new Array();
+    colors2[2] = 'red';
+    console.log(colors2, colors2.length);
+}
+
+// 带版本功能的数组 to add
+{
+
+}
+
+// Error example
+{
+    class ExtendableError extends Error {
+        constructor(message){
+            super();
+            this.message = message;
+            this.stack = (new Error()).stack;
+            this.name = this.constructor.name;
+        }
+    }
+
+    class MyError extends ExtendableError {
+        constructor(m){
+            super(m);
+        }
+    }
+
+    var myerror = new MyError('11');
+    console.log(myerror.message, myerror.name, myerror.stack);
+}
+
+// to add 行为差异

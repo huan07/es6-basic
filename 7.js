@@ -248,7 +248,7 @@
 
     var id = 21;
     // foo(); // error
-    foo.call({ id: 38 }); // to see 
+    foo.call({ id: 38 }); // to see
     foo.apply({ id: 99 });
 }
 
