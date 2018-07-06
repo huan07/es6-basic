@@ -91,38 +91,6 @@
         });
 }
 
-// example4
-let getJSON = null;
-{
-    getJSON = function(url){
-        const promise = new Promise(function(resolve, reject){
-            const handler = function(){
-                if (this.readyState !== 4) {
-                    return false;
-                }
-                if (this.status === 200) {
-                    resolve(this.response);
-                } else {
-                    reject(new Error(this.statusText));
-                }
-            };
-
-            const client = new XMLHttpRequest();
-            client.open('GET', url);
-            client.onreadystatechange = handler;
-            client.responseType = 'json';
-            client.setRequestHeader('Accept', 'application/json');
-            client.send();
-        });
-        return promise;
-    };
-
-    getJSON('./14.json').then(function(value){
-        console.log(`example4 resolve callback ${JSON.stringify(value)}`);
-    }, function(error){
-        console.log(`example4 reject callback ${error}`);
-    });
-}
 
 // resolve参数：Promise的实例
 // p1的状态是pending, p2的回调函数会等待p1的状态改变；
@@ -161,69 +129,6 @@ let getJSON = null;
 }
 
 
-// 3.then
-// 返回的是一个新的Promise实例 可以采用链式写法
-{
-    getJSON('./14.json').then((value) =>{
-        console.log('采用链式写法    ', JSON.stringify(value));
-        return value.code; // 可以是一个Promise实例
-    }).then((code) => console.log(code));
-}
-
-
-// 4.catch
-// .then(null, ()=>{})别名
-{
-    getJSON('./14.json')
-        .then((value) => console.log('fulfilled: ,', value))
-        .catch((error) => console.log('rejected:  ,', error));
-}
-{
-    getJSON('./142.json')
-        .then((value) => console.log('fulfilled: ,', value))
-        .then(null, (error) => console.log('rejected:  ,', error));
-}
-
-// example2  catch的三种写法
-{
-    const promise = new Promise((resolve, reject) =>{
-        throw new Error('test');
-    });
-
-    const promise2 = new Promise((resolve, reject) =>{
-        try {
-            throw new Error('test2');
-        } catch (ex) {
-            reject(ex);
-        }
-    });
-
-    const promise3 = new Promise((resolve, reject) =>{
-        reject(new Error('test3')); // reject方法的作用，等同于抛出错误
-    });
-
-    promise.catch((error) =>{
-        console.log('catch:  ,', error);
-    });
-    promise2.catch((error) =>{
-        console.log('catch2:  ,', error);
-    });
-    promise3.catch((error) =>{
-        console.log('catch3:  ,', error);
-    });
-}
-
-// 考点
-{
-    const promise = new Promise((resolve, reject) =>{
-        resolve('xx 999'); // Promise状态已经变成resolved（永久保持该状态，不会再变了），再抛出错误是无效的
-        throw new Error('error 999');
-    });
-
-    promise.then((val) => console.log(val))
-        .catch((err) => console.log(err));
-}
-
 // Promise对象的错误具有“冒泡”性质，会一直向后传递，直到被捕获为止
 // 不使用catch方法 对象抛出的错误不会传递到外层代码，不会有任何反应
 {
@@ -256,65 +161,7 @@ let getJSON = null;
 
 
 // 5.finally
-// 执行完then或catch指定的回调函数以后，都会执行finally方法指定的回调函数
-// finally方法里面的操作，应该是与状态无关的
 {
 
+
 }
-
-
-// 5. Promise.all(Array 成员是Promise实例)  都成功或者其一失败 才去执行then,catch
-var promises = [1, 2, 3].map((item) => getJSON(`./promiseAllTest${item}.json`));
-
-Promise.all(promises)
-    .then((value) =>{
-        // 等结果都返回了才会触发
-        console.log('Promise.all  ', value)
-    })
-    .catch((error) =>{
-        console.log(error)
-    });
-
-// Promise.all   每个实例有自己的catch 并不会触发Promise.all()的catch方法
-// 不会影响彼此的执行
-// better code ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
-let test1 = getJSON('./promiseAllTest11.json')
-    .then((value) => value)
-    .catch((error) => error);
-let test2 = getJSON('./promiseAllTest2.json')
-    .then((value) => value)
-    .catch((error) => error);
-Promise.all([test1, test2])
-    .then(value => console.log('Promise.all  ', value))
-    .catch(error => console.log(error));
-
-// Promise.all   实例没有自己的catch 才会触发Promise.all()的catch方法
-// 会影响整体的执行结果
-let test3 = getJSON('./promiseAllTest3.json')
-    .then(value => value);
-let test4 = getJSON('./promiseAllTest2.json')
-    .then(value => value);
-Promise.all([test3, test4])
-    .then(value => console.log('Promise.all', value))
-    .catch(error => console.log(error));
-
-// 6. Promise.race() ??????????????????
-const racePromise = Promise.race([
-    getJSON('./promiseAllTest30.json'),
-    new Promise((resolve, reject) =>{
-        setTimeout(() =>
-                reject(new Error('request timeout'))
-            , 0)
-    })
-]);
-racePromise.then(value =>{
-    console.log(JSON.stringify(value) + '|||||racePromise.catch')
-});
-racePromise.catch(ex =>{
-    console.log(ex + '|||||racePromise.catch')
-});
-
-// Promise.resolve()
-// Promise.reject()
-
-// 10.
