@@ -143,7 +143,7 @@
 {
     const someAsyncThing = () =>{
         return new Promise((resolve, reject) =>{
-            resolve(x + 2); // to do 被catch捕获
+            resolve(x + 2);
         });
     };
 
