@@ -27,8 +27,10 @@
         .catch((error) =>{
             ;
             // then方法的回调函数，运行中抛出错误，不写的话，内部错误不会反应到外部
-            // Promise 对象的错误具有“冒泡”性质，会一直向后传递，直到被捕获为止。也就是说，错误总是会被下一个catch语句捕获。
-            // 一般总是建议，Promise 对象后面要跟catch方法，这样可以处理 Promise 内部发生的错误
+            // 一般总是建议，Promise 对象后面要跟catch方法，可以处理Promise 对象抛出的错误
+
+            // Promise 对象的错误具有“冒泡”性质，会一直向后传递，直到被捕获为止；
+            // catch方法捕获promise、前一个回调函数运行时发生的错误
         });
 }
 
@@ -122,23 +124,22 @@
 // example6
 {
     new Promise((resolve, reject) =>{
-        resolve('_2');
-        console.log('_1'); // 本轮同步任务先执行
+        resolve('example6  _2');
+        console.log('example6  _1');
     }).then((value) =>{
         console.log(value + 'resolve执行后，后面语句 会执行');
     });
 
     new Promise((resolve, reject) =>{
-        return resolve('_11'); // 后面语句不会执行
-        console.log('_22'); // 可以放在成功的回调内执行
+        return resolve('example6  _11'); // 后面语句不会执行
+        console.log('example6  _22'); // 可以放在成功的回调内执行
     }).then((value) =>{
         console.log(value + 'return resolve执行后，后面语句 不会执行');
     });
 }
 
 
-// Promise对象的错误具有“冒泡”性质，会一直向后传递，直到被捕获为止
-// 不使用catch方法 对象抛出的错误不会传递到外层代码，不会有任何反应
+// Promise 对象的错误
 {
     const someAsyncThing = () =>{
         return new Promise((resolve, reject) =>{
@@ -159,10 +160,6 @@
         .catch((error) =>{
             return console.log('catch捕获到错误       ：' + error);
         });
-}
-
-{
-
 }
 
 // to add example to do

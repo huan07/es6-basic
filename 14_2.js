@@ -36,10 +36,10 @@ let getJSON = null;
 }
 
 // 3.then
-// 返回的是一个新的Promise实例 可以采用链式写法
+// 返回的是一个  新的Promise实例  可以采用链式写法
 {
     getJSON('./14.json').then((value) =>{
-        console.log('采用链式写法    ', JSON.stringify(value));
+        console.log('采用链式写法    ', value);
         return value.code; // 可以是一个Promise实例
     }).then((code) => console.log(code));
 }
@@ -63,34 +63,35 @@ let getJSON = null;
     const promise = new Promise((resolve, reject) =>{
         throw new Error('test');
     });
-
-    const promise2 = new Promise((resolve, reject) =>{
+    promise.catch((error) =>{
+        console.log('example2  catch的三种写法1,', error);
+    });
+}
+{
+    const promise = new Promise((resolve, reject) =>{
         try {
             throw new Error('test2');
         } catch (ex) {
             reject(ex);
         }
     });
-
-    const promise3 = new Promise((resolve, reject) =>{
+    promise.catch((error) =>{
+        console.log('example2  catch的三种写法2,', error);
+    });
+}
+{
+    const promise = new Promise((resolve, reject) =>{
         reject(new Error('test3')); // reject方法的作用，等同于抛出错误
     });
-
     promise.catch((error) =>{
-        console.log('catch:  ,', error);
-    });
-    promise2.catch((error) =>{
-        console.log('catch2:  ,', error);
-    });
-    promise3.catch((error) =>{
-        console.log('catch3:  ,', error);
+        console.log('example2  catch的三种写法3,', error);
     });
 }
 
-// 考点
+// 考点 ！！
 {
     const promise = new Promise((resolve, reject) =>{
-        resolve('xx 999'); // Promise状态已经变成resolved（永久保持该状态，不会再变了），再抛出错误是无效的
+        resolve('考点 999'); // Promise状态已经变成resolved（永久保持该状态，不会再变了），再抛出错误是无效的
         throw new Error('error 999');
     });
 
