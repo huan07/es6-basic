@@ -150,8 +150,8 @@
     someAsyncThing().then(() =>{
         console.log('everythiing is great ' +
             '不会退出进程、终止脚本执行' +
-            'Promise内部的错误不会影响到Promise外部的代码，Promise会吃掉错误，' +
-            '后续代码继续执行');
+            'Promise内部的错误不会影响到Promise外部的代码，' +
+            'Promise会吃掉错误，后续代码继续执行');
     });
 
     someAsyncThing()
