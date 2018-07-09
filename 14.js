@@ -26,7 +26,7 @@
         })
         .catch((error) =>{
             ;
-            // then方法的回调函数，运行中抛出错误
+            // then方法的回调函数，运行中抛出错误，不写的话，内部错误不会反应到外部
             // Promise 对象的错误具有“冒泡”性质，会一直向后传递，直到被捕获为止。也就是说，错误总是会被下一个catch语句捕获。
             // 一般总是建议，Promise 对象后面要跟catch方法，这样可以处理 Promise 内部发生的错误
         });
@@ -47,16 +47,24 @@
 
 // example2 考点
 {
-    let promise = new Promise(function(resolve, reject){ // 新建Promise 会立即执行，无法中途取消
+    let promise = new Promise(function(resolve, reject){
         resolve('example2 third');
         console.log('example2 first');
     });
+    // 新建Promise 会立即执行，无法中途取消
+
     promise.then(function(value){
-        console.log('resolved. ' + value);
-        // 当前脚本所有同步任务执行完，才会执行
-        // 最后输出
+        console.log(`${value} resolved. `);
+
     });
+    // 本轮循环结束前执行
+
     console.log('example2 second');
+
+    setTimeout(() =>{
+        console.log('example2 last');
+    }, 0);
+    // 下轮循环开始执行
 }
 
 // example3
@@ -77,13 +85,13 @@
         });
     }
 
-    loadImageAsync('http://www.dpfile.com/s/c/app/main/index-header/i/new-logo@2x.d69880053e4a48c7742e9e57bd432c9d.png') // step1
+    loadImageAsync('./bd_logo1.png') // step1
         .then((value) =>{
             console.log(value); // step6
         }, (error) =>{
             console.log(error);
         });
-    loadImageAsync('http://www.dpfile.com/s/c/app/main/index-header/i/x.png') // step3
+    loadImageAsync('https://www.baidu.com/img/bd_logo11.png') // step3
         .then((value) =>{
             console.log(value);
         }, (error) =>{
