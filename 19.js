@@ -9,28 +9,37 @@
         this.y = y;
     }
 
-    Point.prototype.toString = function(){
+    Point.prototype.toString = function(){ // 可以枚举
         console.log(this.x + ' -Point- ' + this.y);
     };
 
     var p = new Point(1, 2);
     p.toString();
+
+    const enumerableProp = Object.keys(Point.prototype);
+    const unEnumerableProp = Object.getOwnPropertyNames(Point.prototype);
+    console.log(enumerableProp, unEnumerableProp);
 }
 {
     class Point {
-        // 可以看作构造函数的另一种写法
-        // 类方法是不可枚举的（ es5的原型方法是枚举的 ）！！
         constructor(x, y){
             this.x = x;
             this.y = y;
         }
 
-        toString(){ // 类的所有方法都是定义在类的prototype属性上
+        toString(){ // 类的所有方法都是定义在prototype属性上  // 不可以枚举
             console.log(this.x + ' -Point- ' + this.y);
         }
     }
     new Point(11, 22).toString();
     console.log(typeof Point, Point === Point.prototype.constructor);
+
+    const enumerableProp = Object.keys(Point.prototype);
+    const unEnumerableProp = Object.getOwnPropertyNames(Point.prototype);
+    console.log(enumerableProp, unEnumerableProp);
+
+
+    // 类方法是不可枚举的（ es5的原型方法是枚举的 ）！！
 }
 {
     const methodName = 'getSum';
