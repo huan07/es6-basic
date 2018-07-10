@@ -31,7 +31,7 @@ import { render, } from 'react-dom';
 
 // CommonJS 模块  to add
 
-// 2.属性名表达式   字面量定义对象 属性名表达式赋值，取值
+// 2.属性名表达式
 {
     const obj = {};
     obj.foo = 'foo';
@@ -57,18 +57,9 @@ import { render, } from 'react-dom';
      }*/
 }
 
-// js会隐式的将key转换为字符串类型 String(xx)
-{
-    const keyA = { a: 1 };
-    const keyB = { b: 2 };
-    const myObject = {
-        [keyA]: 'valueA',
-        [keyB]: 'valueB'
-    };
-    console.log('myObject => ', myObject);
-}
 
 // 3  to add
+
 
 // 4.Object.is 同值相等，和===基本一致，不同之处如下
 {
