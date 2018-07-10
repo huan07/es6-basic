@@ -47,7 +47,7 @@
     class Point {
         constructor(x, y){
             // 类的默认方法；如果没有显示定义，JavaScript引擎会添加空的constructor方法
-            // 通过 new 命令生成实例对象，自动调用该方法，返回实例对象
+            // 通过 new命令生成实例对象，自动调用该方法，返回实例对象
             this.x = x; // this => 实例对象 ！！！！
             this.y = y;
         }
@@ -72,10 +72,12 @@
 {
     class Foo {
         constructor(){
-            return Object.create(null); // 在这里返回另外一个对象
+            return Object.create(null); // 指定返回另外一个对象
         }
     }
-    console.log(new Foo() instanceof Foo);
+
+    const foo = new Foo();
+    console.log(foo, foo instanceof Foo);
     // console.log(Foo()); // 必须用new调用，否则error  ( es5可以不用new ！！)
 }
 
