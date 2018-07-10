@@ -42,6 +42,7 @@
     // 类方法是不可枚举的（ es5的原型方法是枚举的 ）！！
 }
 {
+    // 类的属性名可以采用表达式
     const methodName = 'getSum';
     class Point {
         constructor(x, y){
@@ -54,8 +55,7 @@
         toString(){
             return '(' + this.x + ',' + this.y + ')';
         }
-
-        // 类的属性名可以采用表达式
+        
         [methodName](){
             return this.x + this.y;
         }
