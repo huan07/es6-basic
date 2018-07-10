@@ -81,8 +81,7 @@
     // console.log(Foo()); // 必须用new调用，否则error  ( es5可以不用new ！！)
 }
 
-// 4.类的实例对象
-// 实例的属性除非显式定义在其本身（定义在this对象）；否则都定义在原型上（class上）
+// 4.类的实例对象：构造函数内this对象上
 // 类的所有实例共享一个原型对象
 // Object.getPrototypeOf 方法来获取实例对象的原型，可以为原型添加属性／方法
 {
@@ -128,7 +127,7 @@
 // 类定义后，方便被子类继承
 
 
-// 7.私有方法和私有属性（es6不提供）
+// 7.私有方法和私有属性（es6不提供）to add
 // 变通方法模拟实现
 {
     class Widget {
@@ -183,7 +182,7 @@
 // 私有属性不支持  提案：为 class 加了私有属性， ＃  to add
 
 
-// 8.this的指向 （默认指向类的实例）
+// 8.this => 默认类的实例
 // 单独使用方法（比如，解构出来方法），可能会报错
 {
     class Logger {
@@ -198,9 +197,8 @@
     const logger = new Logger();
     logger.printName();
 
-
     const { printName } = logger;
-    // printName(); // error this指向该方法运行时所在的环境
+    // printName(); // error this => 该方法运行时所在的环境（严格模式 => undefined）
 }
 
 {
