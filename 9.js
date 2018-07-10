@@ -77,7 +77,7 @@ import { render, } from 'react-dom';
 
 
 // 5.Object.assign 只拷贝源对象的自身属性，
-// 不拷贝继承、不可枚举属性，
+//  继承、不可枚举属性 xx
 {
     const target = { a: 1, b: 1 };
 
@@ -92,18 +92,21 @@ import { render, } from 'react-dom';
 // 只有一个参数，直接返回这个参数
 {
     const obj = { a: 1 };
-    console.log('Object.assign(obj) === obj', Object.assign(obj) === obj);
-
-    console.log('参数不是对象，会被转换为对象', Object.assign(2));
-
-    // undefined,null无法转成对象，作为首参数会报错；但是可以作为第二，第三参数的；无法转为对象，跳过
-    //console.log(Object.assign(undefined)); error
-    //console.log(Object.assign(null)); error
+    console.log(Object.assign(obj), Object.assign(obj) === obj);
     console.log(Object.assign(obj, undefined), Object.assign(obj, undefined) === obj);
     console.log(Object.assign(obj, null), Object.assign(obj, null) === obj);
 
-    console.log('源对象无法转为对象，不会对目标对象有效果', Object.assign({}, 3), Object.assign({}, true));
-    console.log('字符串以数组的形式 拷贝到目标对象', Object.assign({}, '36'));
+    console.log('参数不是对象，会被转换为对象', Object.assign(2));
+
+    // undefined,null无法转成对象，作为首参数会报错；
+    // 但是可以作为第二，第三参数的；无法转为对象，跳过
+
+    //console.log(Object.assign(undefined)); error
+    //console.log(Object.assign(null)); error
+
+    // 源对象无法转为对象，不会对目标对象有效果
+    // 字符串以数组的形式 拷贝到目标对象
+    console.log(Object.assign(obj, '99', 3, true));
 }
 
 // Object.assign浅拷贝 目标对象 拷贝的是 源对象的引用
@@ -111,7 +114,7 @@ import { render, } from 'react-dom';
     const obj1 = { a: { b: 1 } };
     const obj2 = Object.assign({}, obj1);
     obj1.a.b = 'bb';
-    console.log('浅拷贝', obj2.a.b);
+    console.log('浅拷贝 => ', obj2.a.b);
 }
 
 // 同名属性整体替换
@@ -148,7 +151,7 @@ import { render, } from 'react-dom';
         const extendsProp = Object.getPrototypeOf(origin);
         return Object.assign(Object.create(extendsProp), origin);
     }
-
+    
     console.log("clone => ", clone({ a: 'clone' })); // to add example
 }
 
