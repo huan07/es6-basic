@@ -151,7 +151,7 @@ import { render, } from 'react-dom';
         const extendsProp = Object.getPrototypeOf(origin);
         return Object.assign(Object.create(extendsProp), origin);
     }
-    
+
     console.log("clone => ", clone({ a: 'clone' })); // to add example
 }
 
@@ -167,21 +167,24 @@ console.log('merge2返回一个新对象', merge2(source1, source2));
 
 // 5.为属性指定默认值
 // 1)
-const DEFAULTS = {
-    logLevel: 0,
-    outputFormat: 'html',
-    url: { // 属性值要是一个对象 DEFAULTS可能不会起作用  浅拷贝 整体替换
-        host: 'xx',
-        port: 7070
-    },
-};
+{
+    const DEFAULTS = {
+        logLevel: 0,
+        outputFormat: 'html',
+        url: { // 属性值要是一个对象 DEFAULTS可能不会起作用  浅拷贝 整体替换
+            host: 'xx',
+            port: 7070
+        },
+    };
 
-function processContent(options){
-    console.log(options);
-    options = Object.assign({}, DEFAULTS, options);
-    console.log(options);
+    function processContent(options){
+        console.log(options);
+        options = Object.assign({}, DEFAULTS, options); // ? ?
+        console.log(options);
+    }
+
+    processContent({ url: { port: 8080 } });
 }
-processContent({ url: { port: 8080 } });
 
 
 // 6.to add
