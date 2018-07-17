@@ -2,7 +2,7 @@
  * Created by yangHuan on 17/9/18.
  */
 
-// 1. array，按照对应位置，对变量赋值（用 , 分割，按位置赋值）。
+// 1. Array => 以, 分割2的，按位置赋值
 // 先赋值，如果赋值的是undefined, 再用它的默认值
 {
     let [foo, [[bar], baz]] =[1, [[2], 3]]; // 可用于嵌套结构
@@ -11,32 +11,48 @@
     // 解构不成功，变量的值为：undefined
     let [x, y, ...z]=['a'];
     console.log(x, y, z);
+
+    // 不完全解构
+    let [a, [b], d]=[1, [2, 3], 4];
+    console.log(a, b, d);
 }
 
-// 不完全解构
-
-//  等号右边的不是数组会报错（不是可遍历的结构）
+//  等号的右边不是数组会报错（不是可遍历的结构）
 {
     let [foo]='a'; // 1,false,NaN,undefined,null,{},
+    console.log('foo => ', foo);
 }
 
-// to add examples
+// 只要某种数据结构具有 Iterator 接口，都可以采用数组形式的解构赋值 to add
 
-// 默认值 生效的条件是：undefined, === 比较
+// 默认值 生效的条件：=== 比较undefined
 {
-    var [x1, y1 = 'b']=['a'];
-    console.log(x1, y1);
+    var [x, y = 'b']=['a'];
+    console.log('x, y => ', x, y);
 
-    var [x1, y1 = 'b']=['a', undefined];
-    console.log(x1, y1);
+    var [x, y = 'b']=['a', undefined];
+    console.log('x, y => ', x, y);
 
-    var [x1, y1 = 'b']=['a', null];
-    console.log(x1, y1, 'y1没有取到默认值 =>');
+    var [x, y = 'b']=['a', null];
+    console.log('x, y => ', x, y);
 }
 
-// 默认值是一个表达式 惰性求值 to add
+// 默认值是一个表达式 表达式是惰性求值的
 {
+    function f(){
+        console.log('aaa');
+        return 'aaa';
+    }
 
+    let [x = f()]=[1];
+}
+{
+    function f(){
+        console.log('惰性求值aaa2');
+        return '惰性求值aaa2';
+    }
+
+    let [x = f()]=[];
 }
 
 // 默认值可以引用解构赋值的其他变量，但该变量必须已经声明 ！！
@@ -58,37 +74,44 @@
 }
 
 
-// 2. object 按照左右侧对象的属性名，对左侧对象的变量名赋值，
+// 2. Object 变量必须与右侧对象属性同名赋值，与次序无关
 // 左侧对象的属性名、变量名一致，可以省略一个，
 {
-    let { foo, bar, baz } = { bar: 'bbb', foo: 'aaa' };
-    console.log('object destructure => ', foo, bar, baz); // 解构不成功，变量的值为：undefined
-}
-{
-    // 属性名，变量名不一致，不可以省略
-    let { foo, bar:baz } = { foo: 'aaa', bar: 'bbb' };
-    console.log(foo, baz);
-    // console.log(bar); // error bar is not defined, bar只是模式
-}
-{
-    let { p:[x, { y }] } = { p: ['hello', { y: 'world' }] };
-    console.log('可用于嵌套结构 => ', x, y);
-
-    let { loc, loc:{ start }, loc:{ start:{ line, column } } } = { loc: { start: { line: 1, column: 5 } } };
-    console.log(loc, start, line, column);
+    let { bar, foo, baz } = { foo: 'aaa', bar: 'bbb' };
+    console.log('object destructure => ', foo, bar, baz); // 解构不成功，变量的值：undefined
 }
 
-// 指定默认值（从右侧匹配到的值是undefined, 指定的默认值才生效）
+// 属性名、变量名不一致，不可以省略
 {
-    var { x = 33 }={};
+    let { foo: baz, bar } = { foo: 'aaa', bar: 'bbb' };
+    console.log(baz, bar);
+    // console.log(foo); // error foo is not defined, foo只是模式
+}
+
+// 可用于嵌套结构
+{
+    let { p:[x, { y }], p } = { p: ['hello', { y: 'world' }] };
+    console.log('x, y, p => ', x, y, p);
+}
+
+// 默认值 生效的条件：对象的属性值 === undefined
+{
+    var { x = 3 }={};
     console.log(x);
-
-    var { x:y = 34 }={};
+}
+{
+    var { x:y = 3 }={};
     console.log(y);
-
-    var { x = 35 }={ x: null };
-    console.log(x);
 }
+{
+    var { x:y = 3 }={ x: 5 };
+    console.log('y = 5 => ', y);
+}
+{
+    var { x = 35 }={ x: null };
+    console.log('x = null => ', x);
+}
+
 
 // 扩展运算符 结合 解构赋值
 // 等号右边要求是对象，undefined, null, 无法转换为对象，error
@@ -125,9 +148,7 @@
 
     // {...{y,z}} =o; // ...后面要直接跟上变量名
 }
-
-
-// to add
+// to add xx
 
 
 // 3. String
@@ -135,13 +156,13 @@
     const [a, b, c, d, e] = 'hello';
     console.log('3. String => ', a, b, c, d, e);
     const { length:helloLen } = 'hello';
-    console.log('3. String => ', helloLen);
+    console.log('3. helloLen => ', helloLen);
 }
 
 
 // 4. Number, Boolean
 // 解构赋值的规则是，只要等号右边的值不是对象或数组，就先将其转为对象
-//  等号右边的是undefined, null, 会报错
+// undefined和null无法转为对象，所以对它们进行解构赋值，都会报错
 {
     /*let { x } = undefined;
      let { y } = null;
@@ -155,12 +176,13 @@
         return x + y;
     }
 
-    console.log('5. Function => ', add([4, 5]));
+    console.log('add([4, 5]) => ', add([4, 5]));
 
     [[1, 2], [3, 4], [undefined, undefined]].map(([x = 2017, y = 2017]) =>{
         console.log('5. Function => ', x + y)
     });
 }
+
 {
     function move({ x = 9, y = 9 } = {}){
         console.log('// 5. 函数参数的解构使用默认值', x, y); // ！！better
@@ -171,16 +193,18 @@
     move({ y: 2 });
     move({});
     move();
+}
 
-    function move2({ x, y } = { x: 9, y: 9 }){
-        console.log('// 5. 为函数参数指定默认值', x, y);// ！！
+{
+    function move({ x, y } = { x: 9, y: 9 }){
+        console.log('// 5. 为函数参数指定默认值', x, y);
     }
 
-    move2({ x: 1, y: 2 });
-    move2({ x: 1 });
-    move2({ y: 2 });
-    move2({});
-    move2();
+    move({ x: 1, y: 2 });
+    move({ x: 1 });
+    move({ y: 2 });
+    move({});
+    move();
 }
 
 // 6. to add
@@ -198,7 +222,7 @@
 //(2) 从函数返回多个值
 {
     function example(){
-        return [11, 22, 33];
+        return [1, 2, 3];
     }
 
     let [a, b, c] = example();
@@ -206,7 +230,7 @@
 }
 {
     function example(){
-        return { foo: 'foo', bar: 'bar' };
+        return { foo: 1, bar: 2 };
     }
 
     let { foo, bar } = example();
@@ -232,4 +256,4 @@
 //(4) 提取json数据
 //(5) 函数参数的默认值，例如：ajax参数的默认值   better
 //(6)  to add
-//(7)  to add
+//(7) 输入模块的指定方法 to add
