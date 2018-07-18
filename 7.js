@@ -136,7 +136,7 @@
 // 4. to add
 
 
-// 5. =>  to do
+// 5. =>  to start
 {
     var f = v => v;
     var f_ = function(v){
