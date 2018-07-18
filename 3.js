@@ -37,7 +37,7 @@
     console.log('x, y => ', x, y);
 }
 
-// 默认值是一个表达式 表达式是惰性求值的
+// 默认值是一个表达式 表达式是惰性求值的（传入参数是undefined才去求表达式）
 {
     function f(){
         console.log('aaa');

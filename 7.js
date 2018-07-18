@@ -2,7 +2,8 @@
  * Created by yanghuan on 17/9/4.
  */
 
-// 1.函数参数的默认值；没有赋值（显式undefined），默认值才生效
+// 1.函数参数的默认值；
+// 生效条件：没有赋值／显式undefined
 {
     function log(x, y = 'World'){ // 在函数体中，y不能用let const 再次声明
         console.log(x, y);
@@ -13,7 +14,7 @@
     log('hello', 'baidu');
 }
 
-// 使用参数默认值时，函数不能有 同名命名参数
+// 使用参数默认值时，函数不能有 同名参数
 {
     /*function foo(x,x,y){
 
@@ -24,21 +25,8 @@
      }*/
 }
 
-// 参数默认值是惰性求值的
-{
-    let x = 99;
+// 参数默认值是惰性求值的  // 3.js
 
-    function foo2(p = x + 1){ // 每次调用，重新计算p
-        console.log('参数默认值是惰性求值的 => ', p);
-    }
-
-    foo2(); // 100
-    foo2(); // 100
-
-    x = 105;
-    foo2(); // 106
-    foo2(105); // 106
-}
 
 // 与解构赋值默认值结合
 {
@@ -53,7 +41,7 @@
 }
 {
     function foo({ x, y = 5 }={}){ // 函数参数的默认值是 {} , 不传参数调用，就不会报错了
-        console.log('提供函数参数的默认值 => ', x, y);
+        console.log('提供函数参数的默认值 => ', x, y); // better
     }
 
     foo({});
@@ -62,7 +50,7 @@
     foo();
 }
 
-// 参数默认值的位置 ！！
+// 参数默认值的位置（最好用尾参数）
 {
     function f(x = 1, y){
         console.log('参数默认值的位置 => ', x, y);
@@ -71,7 +59,7 @@
     f();
     f(2);
     // f(,1); // error
-    f(undefined, 2); // 不是尾参数，调用时必须 显式传入参数undefined
+    f(undefined, 2); // 不是尾参数，调用时必须 显式传入参数undefined！！
     f(3, 4);
 }
 
@@ -148,7 +136,7 @@
 // 4. to add
 
 
-// 5. =>
+// 5. =>  to do
 {
     var f = v => v;
     var f_ = function(v){
