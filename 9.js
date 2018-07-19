@@ -16,17 +16,19 @@ import { render, } from 'react-dom';
             return 'method简写; ';
         }
     };
+
+    const o2 = { // !!!!
+        method: () =>{
+            return 'method简写 _结合箭头函数; ';
+        }
+    };
+
     const o_ = {
         method: function(){
             return 'method _es2015; ';
         }
     };
-    const o__ = { // !!!!
-        method: () =>{
-            return 'method简写 _结合箭头函数; ';
-        }
-    };
-    console.log(o.method(), o_.method(), o__.method());
+    console.log(o.method(), o2.method(), o_.method());
 }
 
 // CommonJS 模块  to add
@@ -49,7 +51,7 @@ import { render, } from 'react-dom';
             return 'hi';
         }
     };
-    console.log('字面量定义对象 => ', obj, obj[propKey], obj['foo'], obj[`abc`], obj.hello());
+    console.log('字面量定义对象，允许属性名表达式 => ', obj, obj[propKey], obj['foo'], obj[`abc`], obj.hello());
 
     // 属性名表达式与简洁表示法，不能同时使用，会报错
     /*obj = {
@@ -61,7 +63,7 @@ import { render, } from 'react-dom';
 // 3  to add
 
 
-// 4.Object.is 同值相等，和===基本一致，不同之处如下
+// 4.Object.is 同值相等，和 === 基本一致，不同之处如下
 {
     console.log(+0 === -0, NaN === NaN);
     console.log('Object.is => ', Object.is(+0, -0), Object.is(NaN, NaN));
@@ -77,7 +79,7 @@ import { render, } from 'react-dom';
 
 
 // 5.Object.assign 只拷贝源对象的自身属性，
-//  继承、不可枚举属性 xx
+//  继承、不可枚举属性 不拷贝
 {
     const target = { a: 1, b: 1 };
 
@@ -85,28 +87,23 @@ import { render, } from 'react-dom';
     const source2 = { c: 3 };
 
     const xx = Object.assign(target, source1, source2); // 拷贝到目标对象，返回的是目标对象的值！！
-    console.log('返回的是目标对象！！', xx);
-    console.log('target => ', target, xx === target);
+    console.log('target => ', xx, target, xx === target);
 }
 
 // 只有一个参数，直接返回这个参数
+// undefined,null无法转成对象，作为首参数会报错；但是可以作为第二，第三参数的；无法转为对象，跳过
 {
     const obj = { a: 1 };
     console.log(Object.assign(obj), Object.assign(obj) === obj);
-    console.log(Object.assign(obj, undefined), Object.assign(obj, undefined) === obj);
-    console.log(Object.assign(obj, null), Object.assign(obj, null) === obj);
 
     console.log('参数不是对象，会被转换为对象', Object.assign(2));
-
-    // undefined,null无法转成对象，作为首参数会报错；
-    // 但是可以作为第二，第三参数的；无法转为对象，跳过
 
     //console.log(Object.assign(undefined)); error
     //console.log(Object.assign(null)); error
 
-    // 源对象无法转为对象，不会对目标对象有效果
+    // 源对象无法转为对象，不会对目标对象有效果，直接跳过
     // 字符串以数组的形式 拷贝到目标对象
-    console.log(Object.assign(obj, '99', 3, true));
+    console.log(Object.assign(obj, '99', 3, true, undefined, null));
 }
 
 // Object.assign浅拷贝 目标对象 拷贝的是 源对象的引用
@@ -114,7 +111,7 @@ import { render, } from 'react-dom';
     const obj1 = { a: { b: 1 } };
     const obj2 = Object.assign({}, obj1);
     obj1.a.b = 'bb';
-    console.log('浅拷贝 => ', obj2.a.b);
+    console.log('浅拷贝 => ', obj1.a.b, obj2.a.b);
 }
 
 // 同名属性整体替换
@@ -137,33 +134,36 @@ import { render, } from 'react-dom';
 // Object.assign用途
 // 1.为对象添加属性 to add
 // 2.         方法 to add
-// 3.克隆对象
+// 3.克隆对象  看不到区别呢？
 {
     function clone(origin){ // 克隆对象自身的值
         return Object.assign({}, origin)
     }
 
-    console.log("clone => ", clone({ a: 'clone' }));
+    const obj = { a: 'clone' };
+    console.log("clone => ", clone(obj));
 }
-
 {
-    function clone(origin){ // 克隆对象自身值 + 继承值
-        const extendsProp = Object.getPrototypeOf(origin);
-        return Object.assign(Object.create(extendsProp), origin);
+    function clone2(origin){ // 克隆对象自身值 + 继承值
+        const originProp = Object.getPrototypeOf(origin);
+        return Object.assign(Object.create(originProp), origin);
     }
 
-    console.log("clone => ", clone({ a: 'clone' })); // to add example
+    const obj = { a: 'clone' };
+    console.log("clone => ", clone2(obj));
 }
 
 // 4.合并多个对象
-var target = { a: 1, b: 2 };
-var source1 = { b: 3, c: 4 };
-var source2 = { c: 5 };
-const merge = (target, ...sources) => Object.assign(target, ...sources);
-console.log('merge合并到某个对象', merge(target, source1, source2));
+{
+    var target = { a: 1, b: 2 };
+    var source1 = { b: 3, c: 4 };
+    var source2 = { c: 5 };
+    const merge = (target, ...sources) => Object.assign(target, ...sources);
+    console.log('merge合并到某个对象', merge(target, source1, source2));
 
-const merge2 = (...sources) => Object.assign({}, ...sources);
-console.log('merge2返回一个新对象', merge2(source1, source2));
+    const merge2 = (...sources) => Object.assign({}, ...sources);
+    console.log('merge2返回一个新对象', merge2(source1, source2));
+}
 
 // 5.为属性指定默认值
 // 1)
@@ -178,9 +178,9 @@ console.log('merge2返回一个新对象', merge2(source1, source2));
     };
 
     function processContent(options){
-        console.log(options);
-        options = Object.assign({}, DEFAULTS, options); // ? ?
-        console.log(options);
+        console.log('options => ', options);
+        options = Object.assign({}, DEFAULTS, options); // better, 没有必要再声明一个变量
+        console.log('options => ', options);
     }
 
     processContent({ url: { port: 8080 } });
@@ -188,12 +188,68 @@ console.log('merge2返回一个新对象', merge2(source1, source2));
 
 
 // 6.to add
+{
 
-// 7.to add
+}
+
+// 7.Object.getOwnPropertyDescriptors
+{
+    const obj = {
+        foo: 123,
+        get bar(){
+            return 'abc';
+        }
+    };
+
+    const descriptors = Object.getOwnPropertyDescriptors(obj);
+    console.log('descriptors => ', descriptors);
+}
+
+// 解决Object.assign()无法正确拷贝get属性和set属性的问题。
+{
+    const source = {
+        set foo(value){
+            console.log(value);
+        }
+    };
+
+    const target = {};
+    Object.assign(target, source);
+
+    console.log('无法正确拷贝get属性和set属性 => ', Object.getOwnPropertyDescriptor(target, 'foo'));
+    console.log('无法正确拷贝get属性和set属性 => ', Object.getOwnPropertyDescriptors(target));
+}
+
+// Object.getOwnPropertyDescriptors方法配合Object.defineProperties方法，
+// 就可以实现正确拷贝
+{
+    const source = {
+        set foo(value){
+            console.log(value);
+        }
+    };
+
+    const target2 = {};
+    Object.defineProperties(target2, Object.getOwnPropertyDescriptors(source));
+
+    console.log('实现正确拷贝 => ', Object.getOwnPropertyDescriptor(target2, 'foo'));
+    console.log('实现正确拷贝 => ', Object.getOwnPropertyDescriptors(target2));
+}
+
+// to add 有点晕
 
 
-// 8.Object.setPrototypeOf
-// Object.getPrototypeOf
+// 8. __proto__
+// Object.setPrototypeOf(object,prototype) // 将prototype设置为object的原型对象
+// Object.getPrototypeOf(object) // 读取object的原型对象
+// Object.create
+{
+    var xx = function(obj, proto){
+        obj.__proto__ = proto;
+        return obj;
+    };
+}
+
 {
     const o = Object.setPrototypeOf({}, null);
     console.log('o => ', o);
@@ -201,12 +257,56 @@ console.log('merge2返回一个新对象', merge2(source1, source2));
 {
     let proto = {};
     let obj = { x: 10 };
-    const o = Object.setPrototypeOf(obj, proto);
-    console.log('o => ', o);
+    Object.setPrototypeOf(obj, proto);
+
+    proto.y = 20;
+    proto.z = 40;
+
+    console.log('obj, proto => ', obj, proto);
 }
 
 
-// 9.to add
+// 9.
+// this => 函数所在的当前对象！！
+// super => 当前对象的原型对象，只能用在对象的方法之中，否则会报错
+
+{
+    const proto = {
+        foo: 'hello'
+    };
+
+    const obj = {
+        foo: 'world',
+        find(){
+            return super.foo;
+        }
+    };
+
+    Object.setPrototypeOf(obj, proto);
+    console.log(obj);
+    console.log('super属性 => ', obj.find());
+}
+
+// example
+{
+    const proto = {
+        foo: 'hello',
+        find(){
+            console.log(this.foo);
+        },
+    };
+
+    const obj = {
+        foo: 'world',
+        find(){
+            super.find();
+        },
+    };
+
+    Object.setPrototypeOf(obj, proto);
+    console.log(obj);
+    obj.find();
+}
 
 
 // 10.Object.keys，Object.values, Object.entries
