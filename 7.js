@@ -136,7 +136,7 @@
 // 4. to add
 
 
-// 5. =>  to start
+// 5. =>
 {
     var f = v => v;
     var f_ = function(v){
@@ -187,7 +187,7 @@
         return 'f6_';
     };
     f5();
-    console.log(f6());
+    f6();
 }
 
 // 与变量解构结合
@@ -235,8 +235,8 @@
     }
 
     var id = 21;
-    // foo(); // error
-    foo.call({ id: 38 }); // to see
+    // foo(); // error 严格模式this => undefined
+    foo.call({ id: 38 });
     foo.apply({ id: 99 });
 }
 
@@ -272,16 +272,12 @@
     }
 
     var f = foo.call({ id: 1 });
-    console.log('f ', f);
 
     var t1 = f.call({ id: 2 })()(); // 无法改变this
-    console.log('t1 ', f());
 
     var t2 = f().call({ id: 3 })(); // 无法改变this
-    console.log('t2 ', f()());
 
     var t3 = f()().call({ id: 4 }); // 无法改变this
-    console.log('t3 ', f()()());
 }
 
 // 箭头函数还没有自己的arguments、super、new.target; 指向最外层的函数的参数
@@ -336,6 +332,7 @@
 }
 
 
+// 7. to add
 // 8. to add
 
 
