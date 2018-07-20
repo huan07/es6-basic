@@ -112,42 +112,6 @@
     console.log('x = null => ', x);
 }
 
-
-// 扩展运算符 结合 解构赋值
-// 等号右边要求是对象，undefined, null, 无法转换为对象，error
-{
-    let { x, y, ...z }={ x: 1, y: 2, a: 3, b: 4 };
-    console.log(x, y, z);
-}
-{
-    // let { ...x, y, ...z }={ x: 1, y: 2, a: 3, b: 4 }; // error ...要放最后位置
-    // console.log(x, y, z);
-}
-
-// 扩展运算符的解构赋值，不能复制继承自原型对象的属性 ！！
-// 一般变量的解构赋值，可以复制继承自原型对象的属性 ！！
-{
-    let o1 = { a: 1 };
-    let o2 = { b: 2 };
-    o2.__proto__ = o1;
-
-    let { ...o3 }=o2;
-    console.log('o3 => ', o3);
-}
-{
-    const o = Object.create({ x: 1, y: 2 });
-    o.z = 3;
-    console.log('o => ', o);
-
-    let { x, ...newObj }=o; // newObj只复制o的自身属性
-    console.log('x, newObj => ', x, newObj);
-
-    let { y, z }=newObj;
-    console.log('y, z => ', y, z);
-
-
-    // {...{y,z}} =o; // ...后面要直接跟上变量名
-}
 // to add xx
 
 

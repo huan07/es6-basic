@@ -333,24 +333,60 @@ import { render, } from 'react-dom';
 }
 
 
-// 11.对象的扩展运算符
+// 11.对象的...
+
+// 1)解构赋值
+// 等号右边要求是对象，undefined, null, 无法转换为对象，error
+{
+    let { x, y, ...z }={ x: 1, y: 2, a: 3, b: 4 };
+    console.log(x, y, z);
+}
+{
+    // let { ...x, y, ...z }={ x: 1, y: 2, a: 3, b: 4 }; // error ...要放最后位置
+    // console.log(x, y, z);
+}
+
+// ...解构赋值，不能复制继承自原型对象的属性 ！！
+{
+    let o1 = { a: 1 };
+    let o2 = { b: 2 };
+    o2.__proto__ = o1;
+
+    let { ...o3 }=o2;
+    console.log('...不能复制继承自原型对象的属性o3 => ', o3);
+}
+
+// 一般变量的解构赋值，可以复制继承自原型对象的属性 ！！
+{
+    const o = Object.create({ x: 1, y: 2 });
+    o.z = 3;
+    console.log('Object.create创建对象 o => ', o);
+
+    let { x, ...newObj }=o; // newObj只复制o的自身属性（...运算符复制），x是一般变量的解构赋值，
+    console.log('x, newObj => ', x, newObj);
+
+    let { y, z }=newObj;
+    console.log('y, z => ', y, z);
+
+
+    // {...{y,z}} =o; // ...后面要直接跟上变量名！！
+}
 
 // (2)拷贝对象：实例属性
 {
     let z = { a: 3, b: 4 };
     let n = { ...z };
     console.log(n, Object.assign({}, z));
+}
+// 想完整克隆一个对象，还拷贝对象原型的属性 to add
+{
 
-    // 拷贝实例＋原型属性 to add
-    {
-
-    }
 }
 
 {
     let z = { a: 3, b: 4 };
-    let z2z3 = { ...z, ...{ c: 'c' } };
-    console.log('合并2个对象', z2z3, Object.assign({}, z, { c: 'c' }));
+    let zc = { ...z, ...{ c: 'c' } };
+    console.log('...合并2个对象 => ', zc, Object.assign({}, z, { c: 'c' }));
 }
 
 // 扩展运算符内部的同名属性会被覆盖掉
@@ -379,7 +415,7 @@ import { render, } from 'react-dom';
     console.log(aWithDefaults, aWithDefaults2);
 
     let emptyObject = { ...null, ...undefined };
-    console.log(emptyObject);
+    console.log('emptyObject => ', emptyObject);
 }
 
 
