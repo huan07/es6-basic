@@ -9,45 +9,44 @@
         this.y = y;
     }
 
-    Point.prototype.toString = function(){ // 可以枚举
+    Point.prototype.toString = function(){ // 可枚举 ！！区别1
         console.log(this.x + ' -Point- ' + this.y);
     };
 
     var p = new Point(1, 2);
     p.toString();
 
-    const enumerableProp = Object.keys(Point.prototype);
-    const unEnumerableProp = Object.getOwnPropertyNames(Point.prototype);
-    console.log(enumerableProp, unEnumerableProp);
+    console.log(Object.keys(p), Object.keys(Point.prototype));
+    console.log(Object.getOwnPropertyNames(p), Object.getOwnPropertyNames(Point.prototype));
 }
 {
-    class Point {
+    class PointP {
         constructor(x, y){
             this.x = x;
             this.y = y;
         }
 
-        toString(){ // 类的所有方法都是定义在prototype属性上  // 不可以枚举
+        toString(){ // 类的所有方法都是定义在prototype属性上  // 不可以枚举 ！！
             console.log(this.x + ' -Point- ' + this.y);
         }
     }
-    new Point(11, 22).toString();
-    console.log(typeof Point, Point === Point.prototype.constructor);
 
-    const enumerableProp = Object.keys(Point.prototype);
-    const unEnumerableProp = Object.getOwnPropertyNames(Point.prototype);
-    console.log(enumerableProp, unEnumerableProp);
+    var pp = new PointP(11, 22);
+    pp.toString();
 
+    console.log(Object.keys(p), Object.keys(PointP.prototype));
+    console.log(Object.getOwnPropertyNames(p), Object.getOwnPropertyNames(PointP.prototype));
 
-    // 类方法是不可枚举的（ es5的原型方法是枚举的 ）！！
+    console.log(typeof PointP, PointP.prototype.constructor === PointP, pp.constructor === PointP);
 }
 {
     // 类的属性名可以采用表达式
     const methodName = 'getSum';
     class Point {
         constructor(x, y){
-            // 类的默认方法；如果没有显示定义，JavaScript引擎会添加空的constructor方法
-            // 通过 new命令生成实例对象，自动调用该方法，返回实例对象
+            // 类的默认方法；
+            // 如果没有显示定义，JavaScript引擎会添加空的constructor方法
+            // 通过 new命令生成实例对象，自动调用该方法，默认返回this对象
             this.x = x; // this => 实例对象 ！！！！
             this.y = y;
         }
@@ -72,7 +71,8 @@
 {
     class Foo {
         constructor(){
-            return Object.create(null); // 指定返回另外一个对象
+            // 指定返回另外一个对象
+            return Object.create(null);
         }
     }
 
@@ -81,15 +81,11 @@
     // console.log(Foo()); // 必须用new调用，否则error  ( es5可以不用new ！！)
 }
 
-// 4.类的实例对象：构造函数内this对象上
+// 4.类的实例对象
 // 类的所有实例共享一个原型对象
-// Object.getPrototypeOf 方法来获取实例对象的原型，可以为原型添加属性／方法
-{
-    ;
-}
 
 
-// 5. Class 表达式
+// 5. Class表达式
 {
     const MyClass = class Me { // Me只在 Class 的内部代码可用，指代当前类 在外部用会报错
         getClassName(){
@@ -98,7 +94,7 @@
     };
 
     let inst = new MyClass();
-    console.log(inst.getClassName());
+    console.log('5. => ', inst.getClassName());
 }
 {
     const MyClassX = class {
@@ -108,8 +104,9 @@
     };
     new MyClassX().xx();
 }
+
+// 立即执行的Class
 {
-    // 立即执行的Class
     const person = new class {
         constructor(name){
             this.name = name;
@@ -127,7 +124,7 @@
 // 类定义后，方便被子类继承
 
 
-// 7.私有方法和私有属性（es6不提供）to add
+// 7.私有方法和私有属性（es6不提供）to do
 // 变通方法模拟实现
 {
     class Widget {
@@ -182,7 +179,7 @@
 // 私有属性不支持  提案：为 class 加了私有属性， ＃  to add
 
 
-// 8.this => 默认类的实例
+// 8.类的方法内部this，它默认 => 类的实例
 // 单独使用方法（比如，解构出来方法），可能会报错
 {
     class Logger {
@@ -198,14 +195,14 @@
     logger.printName();
 
     const { printName } = logger;
-    // printName(); // error this => 该方法运行时所在的环境（严格模式 => undefined）
+    // printName(); // error 提取出来单独使用，this => 该方法运行时所在的环境（严格模式 => undefined）
 }
 
 {
     // 解决方法1:
     class Logger2 {
         constructor(){
-            this.printName = this.printName.bind(this); //
+            this.printName = this.printName.bind(this); // 编译后 被转换为实例方法
         }
 
         printName(name = 'there'){
@@ -223,7 +220,7 @@
 {
     // 解决方法2:
     class Logger3 {
-        printName = (name = 'there') =>{ //
+        printName = (name = 'there') =>{ // 编译后 被添加到构造函数里面去了，也被转换为实例方法
             this.print(`hello ${name}`);
         };
 
@@ -238,7 +235,14 @@
     // 解决方法3: Proxy to add
 }
 
-// 10.
+
+// 9.name
+{
+
+}
+
+
+// 10.Class 的取值函数（getter）和存值函数（setter）
 {
     class MyClass {
 
@@ -247,7 +251,7 @@
         }
 
         set prop(value){
-            console.log(`setter: ${value}`)
+            console.log(`setter: ${value}`);
         }
     }
 
@@ -260,7 +264,27 @@
 // to add example
 
 
-// 12.static方法 (方法如果有this，指的是类)
+// 11.Class 的 Generator 方法
+{
+    class Foo {
+        constructor(...args){
+            this.args = args;
+        }
+
+        *[Symbol.iterator](){ // 返回一个Foo类的默认遍历器
+            for (let arg of this.args) {
+                yield arg;
+            }
+        }
+    }
+
+    for (let x of new Foo('hello', 'world')) {
+        console.log('Generator 方法 => ', x);
+    }
+}
+
+
+// 12.static方法 (方法如果有this，指的是类) 
 // static方法不会被实例继承，直接被类调用
 // 可以被子类继承
 // 可以从super对象上调用的
