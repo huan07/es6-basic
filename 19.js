@@ -284,14 +284,14 @@
 }
 
 
-// 12.static方法 (方法如果有this，指的是类) 
-// static方法不会被实例继承，直接被类调用
-// 可以被子类继承
-// 可以从super对象上调用的
+// 12.static方法 (内部的this => 类)
+// static方法直接被类调用，不会被实例继承；
+// static方法可以被子类继承；
+// static方法也是可以从super对象上调用的；
 {
     class Foo {
         static classMethod(){
-            console.log('static方法不会被实例继承，直接被类调用');
+            console.log('static方法 直接被类调用，不会被实例继承；');
         }
     }
 
@@ -301,50 +301,52 @@
     // foo.classMethod(); // error
 }
 {
-    class Foo {
+    class Foo2 {
         static bar(){
             this.baz();
         }
 
         static baz(){
-            console.log('静态方法的this => 类，而不是实例对象');
+            console.log('static方法 内部的this => 类');
         }
 
         baz(){
-            console.log('原型对象方法，被实例共享的方法');
+            console.log('原型方法，被实例共享的方法');
         }
     }
 
-    Foo.bar();
+    Foo2.bar();
 
-    Foo.baz();
+    Foo2.baz();
+
+    new Foo2().baz();
 }
 {
-    class Foo {
+    class Foo3 {
         static classMethod(){
             console.log('static方法 可以被子类继承');
         }
     }
 
-    class Bar extends Foo {
+    class Bar extends Foo3 {
     }
 
     Bar.classMethod();
 }
 {
-    class Foo {
+    class Foo4 {
         static classMethod(){
             return 'static方法 可以被子类从super对象上调用';
         }
     }
 
-    class Bar extends Foo {
+    class Bar extends Foo4 {
         static classMethod(){
             return super.classMethod() + ', too';
         }
     }
 
-    console.log(Foo.classMethod(), Bar.classMethod());
+    console.log(Foo4.classMethod(), Bar.classMethod());
 }
 
 
@@ -360,7 +362,7 @@
         static myStaticProp = 44; // 类的静态属性
 
         constructor(){
-            console.log(MyClass.myStaticProp);
+            console.log('MyClass.myStaticProp => ', MyClass.myStaticProp);
         }
     }
     new MyClass();
@@ -370,68 +372,72 @@
         myProp = 42; // 类的实例属性  新的写法，老写法放在constructor内；
 
         constructor(){
-            console.log(this.myProp);
+            console.log('this.myProp => ', this.myProp);
         }
     }
     new MyClass();
 }
 
 
-// to add
 // 15. new.target 用在构造函数，返回new的构造函数名，如果不是用new调用的，返回undefined
-// 用在Class 返回当前的Class；被子类继承返回子类名
-// 可以被用在，不能独立使用，必须继承才能使用的类
-function Person(name){
-    if (new.target === Person) {
-        this.name = name;
-    } else {
-        throw new Error('必须使用new命令生成实例');
-    }
-}
-
-function Person2(name){
-    if (new.target !== undefined) {
-        this.name = name;
-    } else {
-        throw new Error('必须使用new命令生成实例');
-    }
-}
-
-new Person('xiaoMing');
-// Person2('xiaoMing'); error
-
-class Rectangle {
-    constructor(length, width){
-        console.log(new.target === Rectangle, length, width);
-        this.length = length;
-        this.width = width;
-    }
-}
-new Rectangle(3, 4);
-
-class Square extends Rectangle {
-    constructor(length){
-        super(length, length);
-    }
-}
-new Square(5);
-
-class Shape {
-    constructor(){
-        if (new.target === Shape) {
-            throw new Error('不能独立使用，被子类继承才可以使用');
+// 用在Class 返回当前的Class；子类继承父类时，new.target会返回子类；
+// 可以写出不能独立使用、必须继承后才能使用的类
+{
+    function Person(name){
+        if (new.target === Person) {
+            this.name = name;
+        } else {
+            throw new Error('必须使用new命令生成实例');
         }
     }
-}
-class Circle extends Shape {
-    constructor(radius){
-        super();
-        console.log('radius', radius);
+
+    function Person2(name){
+        if (new.target !== undefined) {
+            this.name = name;
+        } else {
+            throw new Error('必须使用new命令生成实例');
+        }
     }
+
+    new Person('xiaoMing');
+    // Person2('xiaoMing'); // error
 }
-// new Shape();  error
-new Circle(66);
 
+{
+    class Rectangle {
+        constructor(length, width){
+            console.log(new.target === Rectangle, length, width);
+            this.length = length;
+            this.width = width;
+        }
+    }
+    new Rectangle(3, 4);
 
-// 类必须通过new 来调用
-// 静态属性通过 类 调用，实例对象属性用 this 调用
+    class Square extends Rectangle {
+        constructor(length){
+            super(length, length);
+            console.log('子类继承父类时，new.target会返回子类')
+        }
+    }
+    new Square(5);
+}
+
+{
+    class Shape {
+        constructor(){
+            if (new.target === Shape) {
+                throw new Error('不能独立使用，被子类继承才可以使用');
+            }
+        }
+    }
+
+    class Circle extends Shape {
+        constructor(radius){
+            super();
+            console.log('radius', radius);
+        }
+    }
+
+    // new Shape(); // error
+    new Circle(66);
+}
