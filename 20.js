@@ -60,8 +60,8 @@
 }
 
 // b.super作为对象时，
-// 在普通方法中，指向父类的原型对象；
-// 在静态方法中，指向父类
+// 在普通方法中，super => 父类的原型对象；
+// 在静态方法中，super => 父类
 {
     class A {
         p(){
@@ -109,6 +109,7 @@
     new B();
 }
 
+// 在子类普通方法中，通过super调用父类的方法时，方法内部的this => 当前的子类实例
 {
     class A {
         constructor(){
@@ -127,7 +128,7 @@
         }
 
         m(){
-            super.print(); // 在子类普通方法中，通过super调用父类的方法时，方法内部的this => 当前的子类实例
+            super.print();
             // => super.print.call(this)
         }
     }
@@ -144,13 +145,14 @@
             this.x = 91;
         }
     }
+
     class B extends A {
         constructor(){
             super();
             this.x = 92; // this => 子类实例
-            super.x = 93; // 赋值的属性会变成子类实例的属性
-            console.log(super.x); // ?? undefined
-            console.log(this.x); // ?? 为啥不是93
+            super.x = 93; // 赋值的属性会 变成 子类实例的属性
+            console.log('super.x => ', super.x); // ?? undefined
+            console.log('this.x => ', this.x); // ?? 为啥不是93
         }
     }
     new B();
@@ -159,11 +161,11 @@
 {
     class Parent {
         static myMethod(msg){
-            console.log('static => ', msg);
+            console.log('static function => ', msg);
         }
 
         myMethod(msg){
-            console.log('instance => ', msg)
+            console.log('prototype function => ', msg)
         }
     }
 
@@ -189,7 +191,7 @@
         }
 
         static print(){
-            console.log(this.x);
+            console.log('被子类继承调用，this => 子类', this.x);
         }
     }
 
@@ -208,6 +210,16 @@
     B.m();
 }
 
+// 对象总是继承其他对象的，所以可以在任意一个对象中，使用super关键字
+{
+    var obj = {
+        toString(){
+            return 'MyObject' + super.toString();
+        }
+    };
+    console.log('MyObject => ', obj, obj.toString());
+}
+
 
 // 4.__proto__
 // prototype 存在2条继承链
@@ -220,8 +232,8 @@
 
     }
 
-    console.log('构造函数的继承 => ', B.__proto__ === A); // => 父类
-    console.log('方法的继承 => ', B.prototype.__proto__ === A.prototype); // => 父类原型
+    console.log('构造函数的继承 => 父类', B.__proto__ === A);
+    console.log('方法的继承 => 父类原型', B.prototype.__proto__ === A.prototype);
 }
 
 // 类的继承 实现模式
@@ -250,7 +262,9 @@
     MyArray.prototype = Object.create(Array.prototype, {
         constructor: {
             value: MyArray,
-
+            writable: true,
+            configurable: true,
+            enumerable: true
         }
     });
 
@@ -259,7 +273,7 @@
     console.log(colors, colors.length);
 
     var colors2 = new Array();
-    colors2[2] = 'red';
+    colors2[0] = 'red';
     console.log(colors2, colors2.length);
 }
 
