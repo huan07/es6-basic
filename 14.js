@@ -2,6 +2,8 @@
  * Created by yangHuan on 17/9/14.
  */
 
+import loadImageAsync from './loadImageAsync';
+
 // 2.
 {
     const promise = new Promise(function(resolve, reject){
@@ -19,6 +21,10 @@
     }, function(error){ // 可选回调函数
         ;
     });
+
+    promise
+        .finally(() =>{
+        });
 
     promise
         .then((value) =>{ // 成功，失败的回调写法2  better
@@ -49,44 +55,28 @@
 
 // example2 考点
 {
+    // 新建Promise 会立即执行，无法中途取消 ！！
     let promise = new Promise(function(resolve, reject){
         resolve('example2 third');
         console.log('example2 first');
     });
-    // 新建Promise 会立即执行，无法中途取消
 
+    // 本轮循环结束前执行
     promise.then(function(value){
         console.log(`${value} resolved. `);
 
     });
-    // 本轮循环结束前执行
 
     console.log('example2 second');
 
+    // 下轮循环开始执行
     setTimeout(() =>{
         console.log('example2 last');
     }, 0);
-    // 下轮循环开始执行
 }
 
 // example3
 {
-    function loadImageAsync(url){
-        return new Promise(function(resolve, reject){
-            const image = new Image();
-
-            image.onload = function(){
-                resolve(image); // step5
-            };
-
-            image.onerror = function(){
-                reject(new Error('Could not load image at ' + url)); // step7
-            };
-
-            image.src = url; // step2 step4
-        });
-    }
-
     loadImageAsync('./bd_logo1.png') // step1
         .then((value) =>{
             console.log(value); // step6
@@ -104,7 +94,7 @@
 
 // resolve参数：Promise的实例
 // p1的状态是pending, p2的回调函数会等待p1的状态改变；
-// p1的状态已经是resolved, p2的回调函数才会立刻执行
+// p1的状态已经是resolved/rejected, p2的回调函数才会立刻执行
 // example5 to do
 {
     const p1 = new Promise(function(resolve, reject){
@@ -136,37 +126,4 @@
     }).then((value) =>{
         console.log(value + 'return resolve执行后，后面语句 不会执行');
     });
-}
-
-
-// Promise 对象的错误
-{
-    const someAsyncThing = () =>{
-        return new Promise((resolve, reject) =>{
-            resolve(x + 2);
-        });
-    };
-
-    someAsyncThing().then(() =>{
-        console.log('everythiing is great ' +
-            '不会退出进程、终止脚本执行' +
-            'Promise内部的错误不会影响到Promise外部的代码，' +
-            'Promise会吃掉错误，后续代码继续执行');
-    });
-
-    someAsyncThing()
-        .then(() =>{
-        })
-        .catch((error) =>{
-            return console.log('catch捕获到错误       ：' + error);
-        });
-}
-
-// to add example to do
-
-
-// 5.finally
-{
-
-
 }
