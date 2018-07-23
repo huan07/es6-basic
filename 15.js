@@ -2,6 +2,15 @@
  * Created by yanghuan on 18/7/13.
  */
 
+// 统一的接口机制，来处理所有不同的数据结构
+// 任何数据结构只要部署遍历器(Iterator)接口，就可以完成遍历操作（即依次处理该数据结构的所有成员）
+
+// 一个数据结构只要部署了Symbol.iterator属性，就被视为具有 iterator 接口，就称这种数据结构是“可遍历的”（iterable）；
+// 就可以用for...of循环遍历它的成员；
+// 也可以使用while循环遍历；
+
+// 遍历器对象本质上，就是一个指针对象
+
 // 1.
 {
     function makeIterator(array){
@@ -12,7 +21,7 @@
                     { value: array[nextIndex++], done: false } :
                     { value: undefined, done: true };
             }
-        }
+        };
     }
 
     var it = makeIterator(['a', 'b']);
@@ -23,12 +32,11 @@
 
 
 // 2.默认Iterator接口
-// 一个数据结构只要具有Symbol.iterator属性，就可以认为是“可遍历的”（iterable）
-// 视为具有 iterator 接口，就可以用for...of循环遍历它的成员
 {
     let arr = ['a', 'b', 'c'];
     let iter = arr[Symbol.iterator]();
 
+    console.log('2. => ', iter);
     console.log(iter.next());
     console.log(iter.next());
     console.log(iter.next());
@@ -66,7 +74,7 @@
     }
 }
 
-// 指针结构 部署 Iterator 接口
+// 指针结构 部署 Iterator 接口  to do
 {
     function Obj(value){
         this.value = value;
@@ -103,7 +111,7 @@
     }
 }
 
-// 对象 部署 Iterator 接口
+// 为对象添加 Iterator 接口
 {
     let obj = {
         data: ['hello', 'world'],
@@ -121,20 +129,20 @@
                         return {
                             value: undefined,
                             done: true
-                        }
+                        };
                     }
-
                 }
             };
         }
     };
+
+    for (let v of obj) {
+        console.log('为对象添加 Iterator 接口 v => ', v)
+    }
 }
 
 // 对于类似数组的对象（存在数值键名和length属性），部署 Iterator 接口，
 // 有一个简便方法，就是Symbol.iterator方法直接引用数组的 Iterator 接口
-
-// 有了遍历器接口，数据结构就可以用for...of循环遍历，
-// 也可以使用while循环遍历。
 {
     let iterable = {
         0: 'a',
@@ -166,6 +174,7 @@
 }
 
 // ...也会调用默认的 Iterator 接口
+// 只要某个数据结构部署了 Iterator 接口，就可以对它使用扩展运算符，将其转为数组；
 {
 
 }
@@ -176,7 +185,7 @@
 // 4. String 的Iterator接口
 {
     var someString = 'hi';
-    console.log(typeof someString[Symbol.iterator]);
+    console.log('4. => ', typeof someString[Symbol.iterator]);
 
     var iterator = someString[Symbol.iterator](); // {}
     console.log(iterator.next(), iterator.next(), iterator.next());
@@ -185,7 +194,7 @@
 // 可以覆盖原生的Symbol.iterator
 {
     var str = new String('he');
-    console.log('Iterator 接口 =>', [...str], str);
+    console.log('可以覆盖原生的Symbol.iterator =>', [...str], str);
 
     str[Symbol.iterator] = function(){
         return {
@@ -218,22 +227,23 @@
             yield 3;
         }
     };
-    console.log(myIterable, [...myIterable]);
+    console.log('5. => ', myIterable, [...myIterable]);
 
     let obj = {
         *[Symbol.iterator](){
             yield 'hello';
             yield 'world';
-
         }
     };
     for (let x of obj) {
         console.log(x);
     }
+    console.log('5. => ', obj, [...obj]);
 }
 
 
-// 6.return(), throw()
+// 6.return()  如果for...of循环提前退出（通常是因为出错，或者有break语句）；
+// throw()
 {
     function readLinesSync(file){
         return {
