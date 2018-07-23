@@ -130,9 +130,16 @@ let someAsyncThing = null;
         .then(([value, value2]) => console.log('6  ', value, value2))
         .catch(([error, error2]) => console.log('6 error ', error, error2));
 }
+{
+    const promises = [1, 22].map((item) => getJSON(`./promiseAllTest${item}.json`));
 
-// Promise.all 作为参数的Promise实例，自己定义了catch方法，那么它一旦被rejected，
-// 并不会触发Promise.all()的catch方法  不会影响彼此的执行  better
+    Promise.all(promises)
+        .then(value => console.log(value))
+        .catch(e => console.log(e)); // 第一个被reject的实例的返回值，会传递给回调函数，参数解构为数组会报错
+}
+
+// 作为参数的Promise实例，自己定义了catch方法，那么它一旦被rejected，
+// 并不会触发Promise.all()的catch方法，   不会影响彼此的执行  better
 {
     const p1 = new Promise((resolve, reject) =>{
         resolve('62  hello');
@@ -144,42 +151,36 @@ let someAsyncThing = null;
         throw new Error('62  报错了');
     })
         .then(value => value)
-        .catch(e => e);
+        .catch(e => e); // 返回新的Promise实例
 
     Promise.all([p1, p2])
         .then(([value, value2]) => console.log(value, value2))
         .catch(([e, e2]) => console.log(e, e2));
 }
 
-// Promise.all   实例没有自己的catch 才会触发Promise.all()的catch方法
-// 会影响整体的执行结果！！
+// 每一项实例没有自己的catch方法，那么它一旦被rejected，
+// 才会触发Promise.all()的catch方法，   会影响整体的执行结果！！
 {
     const p1 = new Promise((resolve, reject) =>{
-        resolve('62  hello');
+        resolve('63  hello');
     })
         .then(value => value);
 
     const p2 = new Promise((resolve, reject) =>{
-        throw new Error('62  报错了');
+        throw new Error('63  报错了');
     })
         .then(value => value);
 
-    /* Promise.all([p1, p2])
-     .then(([value,value2]) => console.log(value,value2))
-     .catch(([e,e2]) => console.log(e,e2));*/
+    Promise.all([p1, p2])
+        .then(value => console.log(value))
+        .catch(e => console.log(e)); // 第一个被reject的实例的返回值，会传递给回调函数，参数解构为数组会报错
 }
 
 
 // 7. Promise.race
-{
-    const promises = [1, 22].map((item) => getJSON(`./promiseAllTest${item}.json`));
 
-    /*Promise.race(promises)
-     .then(([value, value2]) => console.log('7  ', value, value2))
-     .catch(([error, error2]) => console.log('7 error ', error, error2));*/
-}
 
-// 8. Promise.resolve
+// 8. Promise.resolve  to start
 {
     var foo = Promise.resolve('foo');
 
