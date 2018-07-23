@@ -237,3 +237,15 @@ let someAsyncThing = null;
     Promise.reject(thenable)
         .catch(error => console.log('9.1 => ', error, error === thenable))
 }
+
+
+// 10. to add
+{
+
+}
+
+
+// 11. to add
+{
+
+}
