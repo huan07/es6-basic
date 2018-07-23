@@ -61,15 +61,16 @@ import loadImageAsync from './loadImageAsync';
         console.log('example2 first');
     });
 
-    // 本轮循环结束前执行
+    // 在本轮“事件循环”结束时执行
     promise.then(function(value){
         console.log(`${value} resolved. `);
 
     });
 
+    // 立即执行
     console.log('example2 second');
 
-    // 下轮循环开始执行
+    // 在下一轮“事件循环”开始时执行
     setTimeout(() =>{
         console.log('example2 last');
     }, 0);

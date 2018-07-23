@@ -180,14 +180,16 @@ let someAsyncThing = null;
 // 7. Promise.race
 
 
-// 8. Promise.resolve  to start
+// 8. Promise.resolve
 {
     var foo = Promise.resolve('foo');
 
     var foo2 = new Promise(resolve => resolve('foo'));
 
-    console.log('foo,foo2 => ', foo, foo2)
+    console.log('8. => ', foo, foo2)
 }
+
+// 参数是一个thenable对象
 {
     let thenable = {
         then: function(resolve, reject){
@@ -196,12 +198,16 @@ let someAsyncThing = null;
     };
 
     let p1 = Promise.resolve(thenable);
-    p1.then(value => console.log('thenable => ', value));
+    p1.then(value => console.log('8.2 => ', value));
 }
+
+// 参数是一个原始值，返回一个新的 Promise 对象，状态为resolved
 {
     const p = Promise.resolve('Hello');
-    p.then(s => console.log('参数不是具有then方法的对象 =>', s));
+    p.then(value => console.log('8.3 => ', value));
 }
+
+// 不带有任何参数
 {
     const p = Promise.resolve();
     p.then(function(){
@@ -209,16 +215,18 @@ let someAsyncThing = null;
     });
 }
 
-// 9.Promise.reject
+// 9.Promise.reject 返回一个新的Promise实例，该实例的状态为rejected
 {
     const p = Promise.reject('出错了');
 
     const p2 = new Promise((resolve, reject) => reject('出错了'));
+
     p2.then(null, function(e){
-        console.log(e);
+        console.log('catch的回调执行 => ', e);
     });
-    console.log('p,p2 => ', p, p2)
+    console.log('9. => ', p, p2)
 }
+
 {
     const thenable = {
         then(resolve, reject){
@@ -226,5 +234,6 @@ let someAsyncThing = null;
         }
     };
 
-    Promise.reject(thenable).catch(e => console.log('e === thenable => ', e === thenable))
+    Promise.reject(thenable)
+        .catch(error => console.log('9.1 => ', error, error === thenable))
 }
