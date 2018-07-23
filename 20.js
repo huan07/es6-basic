@@ -14,12 +14,12 @@
             return this.x + ' super class ' + this.y;
         }
 
-        // 父类的静态方法，也会被子类继承
+        // 父类的静态方法，也会被子类继承 // 19/class Foo3
     }
 
     class ColorPoint extends Point {
         constructor(x, y, color){
-            super(x, y); // 1.调用父类的 constructor(x, y） ！！必须的
+            super(x, y); // 1.调用父类的 constructor(x, y）
             this.color = color; // 只有调用super之后，子类才有this对象，才可以添加子类的属性
         }
 
@@ -40,13 +40,15 @@
 
 
 // 3. super
-// a.作为函数调用时，代表父类的构造函数；
+// a.作为函数调用时，代表父类的构造函数，
+// 只能用在子类的构造函数之中，用在其他地方就会报错；
 {
     class A {
         constructor(){
             console.log('作为函数调用时 => ', this); // new.target指向当前正在执行的函数
         }
     }
+
     class B extends A {
         constructor(){
             super(); // A.prototype.constructor.call(this)
@@ -58,7 +60,7 @@
 }
 
 // b.super作为对象时，
-// 在普通方法中，指向父类的原型对象；父类方法被子类调用，this => 子类实例
+// 在普通方法中，指向父类的原型对象；
 // 在静态方法中，指向父类
 {
     class A {
@@ -66,10 +68,11 @@
             return 2;
         }
     }
+
     class B extends A {
         constructor(){
             super();
-            console.log('在普通方法中 => ', super.p()); // super => 父类的原型
+            console.log('super作为对象 => ', super.p()); // super => 父类的原型
         }
     }
     new B();
@@ -82,6 +85,7 @@
             this.p = 3;
         }
     }
+
     class B extends A {
         get m(){
             return super.p;
@@ -112,7 +116,7 @@
         }
 
         print(){
-            console.log(this.x);
+            console.log('this => ', this, this.x);
         }
     }
 
@@ -123,7 +127,7 @@
         }
 
         m(){
-            super.print(); // 普通方法中，通过super调用父类的方法，this指向当前实例
+            super.print(); // 在子类普通方法中，通过super调用父类的方法时，方法内部的this => 当前的子类实例
             // => super.print.call(this)
         }
     }
