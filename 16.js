@@ -2,7 +2,17 @@
  * Created by yanghuan on 18/7/18.
  */
 
+// 语法上，首先可以把它理解成，Generator 函数是一个状态机，封装了多个内部状态
+// 执行 Generator 函数会返回一个遍历器对象
+
+// 形式上，Generator 函数是一个普通函数
+// function关键字与函数名之间有一个星号
+// 函数体内部使用yield表达式，定义不同的内部状态
+
+
 // 1.
+// yield表达式是暂停执行的标记，
+// 而next方法可以恢复执行
 {
     function* helloWorldGenetator(){
         yield 'hello';
@@ -20,14 +30,11 @@
     console.log(hwg.next());
 
     console.log(hwg.next());
-
-    // 调用 Generator 函数，
-    // 返回一个遍历器对象，代表 Generator 函数的内部指针
 }
 
 // example
 {
-    function *gen(){
+    function* gen(){
         yield 123 + 456;
     }
 
@@ -37,19 +44,20 @@
     console.log(g.next());
 }
 
-// Generator 函数可以不用yield表达式，这时就变成了一个单纯的暂缓执行函
+// Generator 函数可以不用yield表达式，这时就变成了一个单纯的暂缓执行函数
 {
-    function *f(){
+    function* f(){
         console.log('执行了');
     }
 
-    var generator = f();
+    var g = f();
 
     setTimeout(function(){
-        generator.next();
+        g.next();
     }, 2000)
 }
 
+// yield表达式只能用在 Generator 函数里面，用在其他地方都会报错
 // yield表达式如果用在另一个表达式之中，必须放在圆括号里面
 // 用作函数参数或放在赋值表达式的右边，可以不加括号
 {
@@ -66,7 +74,7 @@
 
 // 与 Iterator 接口的关系
 // 对象的Symbol.iterator方法，等于该对象的遍历器生成函数
-// 可以把 Generator 赋值给对象的Symbol.iterator属性
+// 可以把Generator赋值给对象的Symbol.iterator属性，从而使得该对象具有Iterator接口
 {
     var myIterable = {};
     myIterable[Symbol.iterator] = function*(){
@@ -83,8 +91,9 @@
 
 // 2.next方法参数
 // yield表达式本身没有返回值，或者说总是返回undefined
+// next方法可以带一个参数，该参数就会被当作上一个yield表达式的返回值
 {
-    function *f(){
+    function* f(){
         for (var i = 0; true; i++) {
             var reset = yield i;
             if (reset) {
@@ -94,18 +103,15 @@
     }
 
     var g = f();
-
+    console.log('2. => ', g.next());
     console.log(g.next());
-
-    console.log(g.next());
-
     console.log(g.next(true));
 }
 
 // V8 引擎直接忽略第一次使用next方法时的参数，只有从第二次使用next方法开始，参数才是有效的。
 // 从语义上讲，第一个next方法用来启动遍历器对象，所以不用带有参数
 {
-    function *foo(x){
+    function* foo(x){
         var y = 2 * (yield(x + 1));
         var z = yield(y / 3);
         console.log('x, y, z => ', x, y, z);
@@ -123,6 +129,7 @@
     console.log(b.next(13));
 }
 
+// 通过next方法的参数，向 Generator 函数内部输入值
 {
     function *dataConsumer(){
         console.log('started');
@@ -134,11 +141,9 @@
     let g = dataConsumer();
 
     g.next();
-
     g.next('a');
-
     g.next('b');
-
+    g.next();
     g.next();
 }
 
@@ -162,13 +167,12 @@
 }
 
 
-// 3. for...of循环可以自动遍历 Generator 函数时生成的Iterator对象
+// 3. for...of循环可以自动遍历Generator函数时生成的Iterator对象，不需要next方法
 {
-    function *foo(){
+    function* foo(){
         yield 1;
         yield 2;
-        yield 3;
-        return 4;
+        return 3;
     }
 
     for (let v of foo()) {
@@ -178,7 +182,7 @@
 
 // example 利用 Generator 函数和for...of循环，实现斐波那契数列
 {
-    function *fibonacci(){
+    function* fibonacci(){
         let [prev, curr]=[0, 1];
         for (; ;) {
             yield curr;
@@ -190,13 +194,13 @@
         if (n > 5) {
             break;
         }
-        console.log(n);
+        console.log('斐波那契数列 => ', n);
     }
 }
 
-// 通过 Generator 函数为对象加上遍历接口，就可以使用for...of遍历
+// 通过Generator函数为对象加上遍历接口，就可以使用for...of遍历
 {
-    function *objectEntries(obj){
+    function* objectEntries(obj){
         let propKeys = Reflect.ownKeys(obj);
 
         for (let propKey of propKeys) {
@@ -211,7 +215,7 @@
     }
 }
 {
-    function *objectEntries(){
+    function* objectEntries2(){
         let propKeys = Reflect.ownKeys(this);
 
         for (let propKey of propKeys) {
@@ -221,23 +225,24 @@
 
     let jane = { first: 'Jane', last: 'Doe' };
 
-    jane[Symbol.iterator] = objectEntries;
+    jane[Symbol.iterator] = objectEntries2;
 
     for (let [key, value] of jane) {
         console.log(key, value);
     }
 }
 
+// 以下方法内部调用的，都是遍历器接口
 // for...of循环，
 // 扩展运算符（...），
 // Array.from，
-// 解构赋值方法内部调用的，都是遍历器接口
+// 解构赋值
 {
-    function *numbers(){
+    function* numbers(){
         yield 1;
         yield 2;
         return 3;
-        yield  4;
+        yield 4;
     }
 
     console.log([...numbers()], Array.from(numbers()));
@@ -246,14 +251,15 @@
     console.log(x, y);
 }
 
-// 4.遍历器对象的throw方法
-// 可以在函数体外抛出错误，然后在 Generator 函数体内捕获
+
+// 4.Generator.prototype.throw()
+// 可以在函数体外抛出错误，然后在Generator函数体内捕获
 {
     var g = function*(){
         try {
             yield;
         } catch (e) {
-            console.log('内部捕获', e);
+            console.log('内部捕获 => ', e);
         }
     };
 
@@ -265,17 +271,17 @@
         i.throw('b');
         i.throw('c');
     } catch (e) {
-        console.log('外部捕获', e);
+        console.log('外部捕获 => ', e);
     }
 }
 
-// 遍历器对象的throw方法 建议抛出Error对象的实例
+// throw方法可以接受一个参数，该参数会被catch语句接收，建议抛出Error对象的实例
 {
     var g = function*(){
         try {
             yield;
         } catch (e) {
-            console.log(e);
+            console.log('内部捕获 2=> ', e);
         }
     };
 
@@ -287,10 +293,10 @@
 // to add
 
 
-// 5.遍历器对象的return方法
-// 返回给定的值，并且终结遍历 Generator 函数
+// 5.Generator.prototype.return()
+// 返回给定的值，并且终结遍历Generator函数
 {
-    function *gen(){
+    function* gen(){
         yield 1;
         yield 2;
         yield 3;
@@ -299,13 +305,12 @@
     var g = gen();
 
     console.log(g.next());
-    console.log(g.return('foo'));
+    console.log('5. => ', g.return('foo'));
     console.log(g.next()); // 开始取值undefind
-    console.log(g.next());
 }
 
 {
-    function *gen(){
+    function* gen(){
         yield 11;
         yield 22;
         yield 33;
@@ -314,15 +319,14 @@
     var g = gen();
 
     console.log(g.next());
-    console.log(g.return()); // 没有参数返回undefined
+    console.log('5.2 => ', g.return()); // 没有参数返回undefined
     console.log(g.next()); // 开始取值undefind
-    console.log(g.next());
 }
 
 // Generator 函数内部有try...finally代码块，
 // 那么return方法会推迟到finally代码块执行完再执行
 {
-    function *numbers(){
+    function* numbers(){
         yield 1;
         try {
             yield 2;
@@ -337,14 +341,15 @@
     var g = numbers();
     console.log(g.next());
     console.log(g.next());
-    console.log(g.return(99));
-    console.log(g.next()); // 为啥不返回了？？
-    console.log(g.next()); // 为啥不返回了？？
+    console.log('5.3 => ', g.return(99));
+    console.log(g.next()); // 有返回
+    console.log(g.next()); // 开始不返回
+    console.log(g.next()); // 为啥不返回
 }
 
 
 // 6.next()、throw()、return()
-// 都是让 Generator 函数恢复执行，使用不同的语句替换yield表达式。
+// 都是让Generator函数恢复执行，使用不同的语句替换yield表达式。
 {
     const gen = function*(x, y){
         let result = yield x + y;
@@ -352,7 +357,7 @@
     };
 
     const g = gen(1, 2);
-    console.log('next() => ', g.next());
+    console.log('6. => ', g.next());
     console.log(g.next(1));
     console.log(g.next());
 
@@ -364,38 +369,39 @@
 }
 
 
-// 7.yield*
+// 7.yield*  用来在一个 Generator 函数里面执行另一个 Generator 函数
 // 如果在 Generator 函数内部，调用另一个 Generator 函数，默认情况下是没有效果的
 {
-    function * foo(){
+    function* foo(){
         yield 'a';
         yield 'b';
     }
 
-    function *bar(){
+    function* bar(){
         yield 'x';
         foo();
         yield 'y';
     }
 
     for (let v of bar()) {
-        console.log('Generator 函数 内部 调用另外一个Generator 函数，默认没有效果 => ', v);
+        console.log('7. => ', v);
     }
 }
+
 {
-    function * foo(){
+    function* foo(){
         yield 'a';
         yield 'b';
     }
 
-    function *bar(){
+    function* bar(){
         yield 'x';
         yield foo(); // 改进1
         yield 'y';
     }
 
     for (let v of bar()) {
-        console.log('yield 返回的是遍历器对象 => ', v);
+        console.log('7.2 yield返回的是遍历器对象 => ', v);
     }
 }
 
@@ -412,9 +418,11 @@
     }
 
     for (let v of bar()) {
-        console.log('yield* 返回了遍历器对象的内部值 => ', v);
+        console.log('7.3 yield*返回的是遍历器对象的内部值 => ', v);
     }
 }
+
+// to start
 
 // yield*后面的 Generator 函数（没有return语句时），等同于在 Generator 函数内部，部署一个for...of循环
 {
