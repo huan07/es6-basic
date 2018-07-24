@@ -292,8 +292,8 @@
 }
 
 // js for...in循环，只能获得对象的键名，不能直接获取键值
-// ES6 for...of循环，允许遍历获得键值
-// 头条考题
+// ES6 for...of循环，调用数据结构的Symbol.iterator方法，遍历数据成员
+// 头条考题，二者的区别
 {
     var arr = ['a', 'b', 'c'];
 
@@ -313,7 +313,7 @@
 
 // for...of 与其他遍历语法的比较
 // for循环, 比较麻烦
-// forEach, 无法中途退出循环，不能与break、continue和return配合使用
+// forEach, 无法中途跳出循环，不能与break、continue和return配合使用
 {
 
 }
