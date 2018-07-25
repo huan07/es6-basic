@@ -202,10 +202,10 @@ import { render, } from 'react-dom';
     };
 
     const descriptors = Object.getOwnPropertyDescriptors(obj);
-    console.log('descriptors => ', descriptors);
+    console.log('getOwnPropertyDescriptors => ', descriptors);
 }
 
-// 解决Object.assign()无法正确拷贝get属性和set属性的问题。
+// 解决Object.assign()无法正确拷贝get属性和set属性的问题。// to do
 {
     const source = {
         set foo(value){
@@ -244,7 +244,7 @@ import { render, } from 'react-dom';
 // Object.getPrototypeOf(object) // 读取object的原型对象
 // Object.create
 {
-    var xx = function(obj, proto){
+    const xx = function(obj, proto){
         obj.__proto__ = proto;
         return obj;
     };
@@ -268,7 +268,7 @@ import { render, } from 'react-dom';
 
 // 9.
 // this => 函数所在的当前对象！！
-// super => 当前对象的原型对象，只能用在对象的方法之中，否则会报错
+// super => 当前对象的原型对象，只能用在对象方法的简写法中，否则会报错
 
 {
     const proto = {
@@ -277,13 +277,13 @@ import { render, } from 'react-dom';
 
     const obj = {
         foo: 'world',
-        find(){
+        find(){ // 另外两种对象的函数内调用会报错
             return super.foo;
         }
     };
 
     Object.setPrototypeOf(obj, proto);
-    console.log(obj);
+    console.log('9. => ', obj);
     console.log('super属性 => ', obj.find());
 }
 
@@ -304,7 +304,7 @@ import { render, } from 'react-dom';
     };
 
     Object.setPrototypeOf(obj, proto);
-    console.log(obj);
+    console.log('9.2 => ', obj);
     obj.find();
 }
 

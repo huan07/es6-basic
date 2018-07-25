@@ -98,20 +98,20 @@
     });
 
     for (var key in obj) {
-        console.log('遍历自身＋继承的可枚举属性 => ', key)
+        console.log('遍历自身/实例＋继承/原型 属性 => ', key)
     }
 
     const keys = Object.keys(obj);
-    console.log('返回 可枚举的 自身属性 keys => ', keys);
+    console.log('可枚举 自身属性 keys => ', keys);
 
     const names = Object.getOwnPropertyNames(obj);
-    console.log('返回 可枚举＋不可枚举 自身属性 names => ', names);
+    console.log('可枚举＋不可枚举 自身属性 names => ', names);
 
     const symbols = Object.getOwnPropertySymbols(obj);
-    console.log('返回 可枚举＋不可枚举 Symbols属性 symbols => ', symbols);
+    console.log('可枚举＋不可枚举 Symbols属性 symbols => ', symbols);
 
     const allKeys = Reflect.ownKeys(obj);
-    console.log('allKeys => ', allKeys);
+    console.log('自身+Symbol属性 allKeys => ', allKeys);
 }
 
 // 实现非私有的内部方法的效果 to add
