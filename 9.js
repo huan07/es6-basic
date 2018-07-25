@@ -292,7 +292,7 @@ import { render, } from 'react-dom';
     const proto = {
         foo: 'hello',
         find(){
-            console.log(this.foo);
+            console.log(this, this.foo);
         },
     };
 
