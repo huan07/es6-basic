@@ -187,7 +187,7 @@ import { render, } from 'react-dom';
 }
 
 
-// 6.to add
+// 6. 结合10.js
 {
 
 }
