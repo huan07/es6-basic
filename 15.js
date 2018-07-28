@@ -2,10 +2,9 @@
  * Created by yanghuan on 18/7/13.
  */
 
-// 统一的接口机制，来处理所有不同的数据结构
-// 任何数据结构只要部署遍历器(Iterator)接口，就可以完成遍历操作（即依次处理该数据结构的所有成员）
+// 需要一种统一的接口机制，来处理所有不同的数据结构
 
-// 一个数据结构只要部署了Symbol.iterator属性，就被视为具有iterator接口，就称这种数据结构是“可遍历的”（iterable）；
+// 一个数据结构只要部署了Symbol.iterator属性，就被视为具有 iterator 接口，就称这种数据结构是“可遍历的”（iterable）；
 // 就可以用for...of循环遍历它的成员；
 // 也可以使用while循环遍历；
 
@@ -33,7 +32,7 @@
 
 // 2.默认Iterator接口
 {
-    let arr = ['a', 'b', 'c'];
+    let arr = ['a', 'b'];
     let iter = arr[Symbol.iterator]();
 
     console.log('2. => ', iter);
@@ -159,10 +158,7 @@
 
 
 // 3.调用 Iterator 接口的场合
-
-// for...of
-
-// 解构赋值 Array/Set
+// (1)解构赋值 Array/Set
 {
     let set = new Set().add('a').add('b').add('c');
 
@@ -173,16 +169,21 @@
     console.log('3.1 => ', x, y, first, rest);
 }
 
-// ...也会调用默认的 Iterator 接口
+// (2)...也会调用默认的 Iterator 接口
 // 只要某个数据结构部署了 Iterator 接口，就可以对它使用扩展运算符，将其转为数组；
 {
 
 }
 
-// yield*  to add
+// (3)yield*  to add
+// for...of
+// Array.from
+// Map(), Set(), WeapMap(), WeakSet()
+// Promise.all()
+// Promise.race()
 
 
-// 4. String 的Iterator接口
+// 4. String 的Iterator接口(原生具有)
 {
     var someString = 'hi';
     console.log('4. => ', typeof someString[Symbol.iterator]);
@@ -191,10 +192,10 @@
     console.log(iterator.next(), iterator.next(), iterator.next());
 }
 
-// 可以覆盖原生的Symbol.iterator
+// 可以覆盖原生的Symbol.iterator方法
 {
     var str = new String('he');
-    console.log('可以覆盖原生的Symbol.iterator =>', [...str], str);
+    console.log('4.2 => ', [...str], str);
 
     str[Symbol.iterator] = function(){
         return {
@@ -238,12 +239,12 @@
     for (let x of obj) {
         console.log(x);
     }
-    console.log('5. => ', obj, [...obj]);
+    console.log('5.2 => ', obj, [...obj]);
 }
 
 
-// 6.return()  如果for...of循环提前退出（通常是因为出错，或者有break语句）；
-// throw()
+// 6.return()
+// throw() 主要是配合Generator函数使用
 {
     function readLinesSync(file){
         return {
@@ -282,8 +283,8 @@
     const obj = {};
     obj[Symbol.iterator] = arr[Symbol.iterator].bind(arr);
 
-    for (let v2 of obj) {
-        console.log('v2 => ', v2);
+    for (let v of obj) {
+        console.log('v => ', v);
     }
 
     arr.forEach(function(item, index){
