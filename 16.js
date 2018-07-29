@@ -2,6 +2,8 @@
  * Created by yanghuan on 18/7/18.
  */
 
+// Generator 函数就是遍历器生成函数
+
 // 语法上，首先可以把它理解成，Generator 函数是一个状态机，封装了多个内部状态
 // 执行 Generator 函数会返回一个遍历器对象
 
@@ -50,16 +52,37 @@
         console.log('执行了');
     }
 
-    var g = f();
+    let g = f();
 
     setTimeout(function(){
         g.next();
-    }, 2000)
+    }, 2000);
 }
 
 // yield表达式只能用在 Generator 函数里面，用在其他地方都会报错
 // yield表达式如果用在另一个表达式之中，必须放在圆括号里面
 // 用作函数参数或放在赋值表达式的右边，可以不加括号
+
+{
+    var arr = [1, [[2, 3], 4], [5, 6]];
+
+    var flat = function*(a){
+        for (var i = 0, len = a.length; i < len; i++) {
+            var item = a[i];
+            if (typeof item !== 'number') {
+                yield* flat(item);
+            } else {
+                yield item;
+            }
+        }
+    };
+
+    for (var f of flat(arr)) {
+        console.log('arr item => ', f);
+    }
+}
+
+
 {
     function *demo(){
         console.log('hello undefined => ' + (yield));
@@ -91,7 +114,7 @@
 
 // 2.next方法参数
 // yield表达式本身没有返回值，或者说总是返回undefined
-// next方法可以带一个参数，该参数就会被当作上一个yield表达式的返回值
+// next方法可以带一个参数，该参数就会被当作 上一个yield表达式的返回值
 {
     function* f(){
         for (var i = 0; true; i++) {
@@ -102,10 +125,12 @@
         }
     }
 
-    var g = f();
+    var g = f(); // to do
     console.log('2. => ', g.next());
     console.log(g.next());
     console.log(g.next(true));
+    console.log(g.next());
+    console.log(g.next());
 }
 
 // V8 引擎直接忽略第一次使用next方法时的参数，只有从第二次使用next方法开始，参数才是有效的。
@@ -118,7 +143,7 @@
         return (x + y + z);
     }
 
-    var a = foo(5);
+    var a = foo(5); // to do
     console.log('next方法不传参数 => ', a.next());
     console.log(a.next());
     console.log(a.next());
@@ -162,7 +187,7 @@
         return 'DONE';
     });
 
-    wrapped().next('hello');
+    wrapped().next('hello'); // to do
     wrapped().next('world');
 }
 
@@ -176,7 +201,7 @@
     }
 
     for (let v of foo()) {
-        console.log('v => ', v);
+        console.log('3.v => ', v);
     }
 }
 
@@ -191,7 +216,7 @@
     }
 
     for (let n of fibonacci()) {
-        if (n > 5) {
+        if (n > 6) {
             break;
         }
         console.log('斐波那契数列 => ', n);
@@ -252,7 +277,7 @@
 }
 
 
-// 4.Generator.prototype.throw()
+// 4.Generator.prototype.throw()      to start
 // 可以在函数体外抛出错误，然后在Generator函数体内捕获
 {
     var g = function*(){
