@@ -42,21 +42,21 @@
 // 复制数组
 {
     const a1 = [1, 2];
-    const a2 = a1;
-    a2[0] = 2; // 根据需求调用
+    const a2 = a1; // 浅拷贝
+    a2[0] = 2;
     console.log('复制的是引用指针 => ', a1, a2);
 }
 {
     const a1 = [1, 2];
     const a2 = a1.concat();
     a2[0] = 2;
-    console.log('复制数组，拿到的是独立的数组 => ', a1, a2);
+    console.log('克隆一个全新的数组 => ', a1, a2);
 }
 {
     const a1 = [3, 4];
     const a2 = [...a1];
     const [...a3]=a1;
-    console.log('es6复制数组 => ', a1, a2, a3);
+    console.log('es6克隆一个全新的数组 => ', a1, a2, a3);
 }
 
 // 合并数组，都是浅拷贝
@@ -104,9 +104,8 @@
     length('hell');
 }
 
-// 转为真正的数组
-// […xx]: 任何Iterator接口的对象可用，
-// […xx]内部调用的是数据结构的 Iterator 接口
+// 转为真正的数组，任何部署Iterator接口的对象可用，
+// […xx]: 调用的是数据结构的Iterator接口
 {
     let arrayLike = {
         '0': 'a',
