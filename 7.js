@@ -303,11 +303,11 @@
         return this.color;
     }
 
-    var fooSayColor = sayColor.bind(foo);
-    var fooSayColor2 = foo::sayColor;
-    console.log(fooSayColor(), fooSayColor2());
+    var fooSayColor = foo::sayColor;
+    var fooSayColor_ = sayColor.bind(foo);
+    console.log(fooSayColor(), fooSayColor_());
 
-    console.log(sayColor.apply(foo), sayColor.call(foo), foo::sayColor());
+    console.log(sayColor.apply(foo, arguments), sayColor.call(foo), foo::sayColor(...arguments));
 
 
     //
@@ -321,13 +321,15 @@
 }
 
 {
-    const log = ::console.log;
+    const log = ::console.log; // 可以省略对象的
+    const log2 = console::console.log;
 
-    const log2 = console.log.bind(console);
+    const log_ = console.log.bind(console);
 
     log(':: 对象的方法写法一');
+    log2(':: 对象的方法写法一');
 
-    log2(':: 对象的方法写法二');
+    log_('bind写法');
 }
 
 
