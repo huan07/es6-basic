@@ -149,7 +149,7 @@
 
 {
     function move({ x = 9, y = 9 } = {}){
-        console.log('// 5. 函数参数的解构使用默认值', x, y); // ！！better
+        console.log('5. 函数参数的解构使用默认值', x, y); // ！！better
     }
 
     move({ x: 1, y: 2 });
@@ -161,7 +161,7 @@
 
 {
     function move({ x, y } = { x: 9, y: 9 }){
-        console.log('// 5. 为函数参数指定默认值', x, y);
+        console.log('5. 为函数参数指定默认值', x, y);
     }
 
     move({ x: 1, y: 2 });

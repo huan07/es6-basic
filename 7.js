@@ -5,7 +5,7 @@
 // 1.函数参数的默认值；
 // 生效条件：没有赋值／显式undefined
 {
-    function log(x, y = 'World'){ // 在函数体中，y不能用let const 再次声明
+    function log(x, y = 'World'){ // 参数变量是默认声明的，所以在函数体中，不能用let或const再次声明
         console.log(x, y);
     }
 
@@ -59,14 +59,14 @@
     f();
     f(2);
     // f(,1); // error
-    f(undefined, 2); // 不是尾参数，调用时必须 显式传入参数undefined！！
+    f(undefined, 2); // 不是尾参数，调用时为了传后面的参数 必须 显式传入参数undefined！！
     f(3, 4);
 }
 
-// 函数的 length 属性  to add
-// 指定默认值的前面参数的个数
+// 函数的 length 属性  计入命名参数默认值的 前面命名参数个数
+// 不计入rest 参数
 
-// 作用域 to add
+// 作用域 to do
 {
     var x = 1;
 
@@ -222,10 +222,9 @@
     console.log('与rest参数结合 => ', headAndTail(11, 12, 13));
 }
 
-// this => 定义时所在的对象，而不是使用时所在的对象（与普通函数相反）！！
-// this的指向 在箭头函数中是 固定的 ，
+// this => 定义时所在的对象（固定的），而不是使用时所在的对象（与普通函数相反）！！
 // 实际原因：箭头函数根本没有自己的this，内部的this就是 最外层代码块的this ！！
-// 没有自己的this, 所以不能够通过call, apply, bind去改变this的指向
+// 没有自己的this，所以不能够通过call, apply, bind去改变this的指向
 
 {
     function foo(){
@@ -291,7 +290,7 @@
     foo(98, 99);
 }
 
-// 嵌套的箭头函数 to add
+// 嵌套的箭头函数 to do
 
 
 // :: 取代call, apply, bind
@@ -332,8 +331,8 @@
 }
 
 
-// 7. to add
-// 8. to add
+// 7. to do
+// 8. 函数参数、数组、对象的 每一项独占一行，可以有尾逗号
 
 
 // 考题：箭头函数的this指向
